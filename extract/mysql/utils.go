@@ -1,4 +1,4 @@
-package log
+package main
 
 import (
 	"bytes"
@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"reflect"
 	"regexp"
@@ -46,42 +45,6 @@ func GetFileSize(filename string) int64 {
 	return result
 }
 
-//根据执行文件路径获取程序的HOME路径
-func GetHomeDirectory() (homedir string) {
-	file, _ := exec.LookPath(os.Args[0])
-	ExecFilePath, _ := filepath.Abs(file)
-
-	os := runtime.GOOS
-	switch os {
-	case "windows":
-		execfileslice := strings.Split(ExecFilePath, `\`)
-		HomeDirectory := execfileslice[:len(execfileslice)-2]
-		for i, v := range HomeDirectory {
-			if v != "" {
-				if i > 0 {
-					homedir += `\` + v
-				} else {
-					homedir += v
-				}
-			}
-		}
-	case "linux":
-		execfileslice := strings.Split(ExecFilePath, "/")
-		HomeDirectory := execfileslice[:len(execfileslice)-2]
-		for _, v := range HomeDirectory {
-			if v != "" {
-				homedir += `/` + v
-			}
-		}
-	default:
-		logrus.Error(fmt.Sprintf("Unknown operation type: %s", os))
-	}
-
-	if homedir == "" {
-		logrus.Error(fmt.Sprintf("Get program home directory failed: %s", homedir))
-	}
-	return homedir
-}
 
 //统一格式化输出
 func Format(column_name string, value string) string {

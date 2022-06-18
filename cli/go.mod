@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/emirpasic/gods v1.18.1
-	github.com/go-mysql-org/go-mysql v1.6.0
+	github.com/894494101/go-mysql v1.6.0
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/kylelemons/goat v0.0.0-20130730173348-88200938a23f // indirect
 	github.com/pkg/errors v0.9.1
