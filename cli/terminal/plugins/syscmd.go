@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/mem"
-	"httk/cli/terminal/api"
+	"dds/cli/terminal/api"
 	"io"
 	"os"
 	"os/exec"

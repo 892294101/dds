@@ -1,0 +1,13 @@
+process httk_0001
+sourcedb 192.168.101.12 port 3306 database test type mysql userid root password admin!@123
+setenv(sessioncharset=utf8)
+sqlexec(set time_zone = '+8:00';)
+trail ./data/httk1
+discardfile ./discard/httk1
+ddl include objname httk.*
+dboptions suppressiontrigger ignorereplicates getreplicates
+table httk.*
+-- 注释
+tableexclude httk.test*
+
+

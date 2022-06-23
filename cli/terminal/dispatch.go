@@ -17,7 +17,7 @@ import (
 	"sync"
 	"syscall"
 
-	"httk/cli/terminal/api"
+	"dds/cli/terminal/api"
 )
 
 var (

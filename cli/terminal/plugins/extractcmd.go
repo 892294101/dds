@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"httk/cli/terminal/api"
+	"dds/cli/terminal/api"
 )
 
 const LibType = "EXTRACT"
