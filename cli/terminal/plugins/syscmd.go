@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"dds/cli/terminal/api"
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/mem"
-	"dds/cli/terminal/api"
 	"io"
 	"os"
 	"os/exec"
@@ -13,12 +13,6 @@ import (
 	"strconv"
 	"strings"
 )
-
-// 插件类型
-const LibType = "SYS"
-
-// 插件指针
-var Commands sysCommands
 
 // ++++++++++++++++++++++++++++++++++++++ help 命令实现
 type helpCmd string
@@ -284,3 +278,9 @@ func (sc *sysCommands) Registry() (re map[string]map[string]api.Command) {
 	re[LibType][api.HO] = localSys(api.HO)
 	return re
 }
+
+// 插件类型
+const LibType = "SYS"
+
+// 插件指针
+var Commands sysCommands

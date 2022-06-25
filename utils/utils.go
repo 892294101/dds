@@ -45,3 +45,7 @@ func GetHomeDirectory() (dir *string, err error) {
 	}
 	return dir, nil
 }
+
+func HasPrefixIgnoreCase(s, prefix string) bool {
+	return len(s) >= len(prefix) && strings.EqualFold(s[0:len(prefix)], prefix)
+}
