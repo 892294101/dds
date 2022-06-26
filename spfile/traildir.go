@@ -19,7 +19,7 @@ type TrailDir struct {
 }
 
 func (t *TrailDir) Put() {
-	fmt.Println("traildir Info: ", t.ParamPrefix, t.Dir)
+	fmt.Println("traildir Info:", t.ParamPrefix, t.Dir)
 }
 
 // 初始化参数可以支持的数据库和进程

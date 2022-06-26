@@ -19,7 +19,7 @@ type Process struct {
 }
 
 func (p *Process) Put() {
-	fmt.Println("process Info: ", p.ParamPrefix, p.Name)
+	fmt.Println("process Info:", p.ParamPrefix, p.Name)
 }
 
 // 初始化参数可以支持的数据库和进程

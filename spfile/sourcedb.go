@@ -61,7 +61,7 @@ type sourceDB struct {
 }
 
 func (s *sourceDB) Put() {
-	fmt.Println("sourceDB Info: ", *s.ParamPrefix, *s.Address, *s.Port.Key, *s.Port.Value, *s.Database.Key, *s.Database.Value, *s.Type.Key, *s.Type.Value, *s.UserId.Key, *s.UserId.Value, *s.PassWord.Key, *s.PassWord.Value)
+	fmt.Println("sourceDB Info:", *s.ParamPrefix, *s.Address, *s.Port.Key, *s.Port.Value, *s.Database.Key, *s.Database.Value, *s.Type.Key, *s.Type.Value, *s.UserId.Key, *s.UserId.Value, *s.PassWord.Key, *s.PassWord.Value)
 }
 
 // 初始化参数可以支持的数据库和进程
