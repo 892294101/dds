@@ -10,7 +10,11 @@ func main() {
 
 	//m := treebidimap.NewWith(utils.IntComparator, utils.StringComparator)
 
-	p, err := spfile.LoadSpfile("D:\\workspace\\gowork\\src\\myGithubLib\\dds\\build\\param\\httk_0001.desc", spfile.UTF8, logrus.New())
+	p, err := spfile.LoadSpfile("D:\\workspace\\gowork\\src\\myGithubLib\\dds\\build\\param\\httk_0001.desc",
+		spfile.UTF8,
+		logrus.New(),
+		spfile.GetMySQLName(),
+		spfile.GetExtractName())
 	if err != nil {
 		fmt.Println(err)
 	}

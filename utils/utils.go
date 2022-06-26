@@ -49,3 +49,14 @@ func GetHomeDirectory() (dir *string, err error) {
 func HasPrefixIgnoreCase(s, prefix string) bool {
 	return len(s) >= len(prefix) && strings.EqualFold(s[0:len(prefix)], prefix)
 }
+
+func TrimKeySpace(s []string) []string {
+	var deDup []string
+	for _, rv := range s {
+		if strings.TrimSpace(rv) != "" {
+			deDup = append(deDup, strings.TrimSpace(rv))
+		}
+	}
+	return deDup
+}
+

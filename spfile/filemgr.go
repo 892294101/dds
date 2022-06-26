@@ -15,29 +15,31 @@ const (
 	ISO88591
 )
 
-type fileHandle struct {
-	enc  Encoding //文件字符集
-	file string   //文件
-	log  *logrus.Logger
+type spfileBaseInfo struct {
+	enc         Encoding //文件字符集
+	file        string   //文件
+	log         *logrus.Logger
+	dbType      string
+	processType string
 }
 
-func LoadSpfile(filePath string, enc Encoding, log *logrus.Logger) (*Spfile, error) {
+func LoadSpfile(filePath string, enc Encoding, log *logrus.Logger, dbType string, processType string) (*Spfile, error) {
 	if len(filePath) == 0 {
 		return nil, errors.New(fmt.Sprintf("Parameter file path must be specified"))
 	}
-	fh := new(fileHandle)
+	fh := new(spfileBaseInfo)
 	fh.enc = enc
 	fh.file = filePath
 	fh.log = log
+	fh.dbType = dbType
+	fh.processType = processType
 	return fh.LoadFile(fh)
 }
 
-func (f *fileHandle) LoadFile(fh *fileHandle) (*Spfile, error) {
+func (f *spfileBaseInfo) LoadFile(fh *spfileBaseInfo) (*Spfile, error) {
 	_, err := os.Stat(fh.file)
 	if os.IsNotExist(err) {
 		return nil, errors.Errorf("File not found: %s", fh.file)
 	}
-	return &Spfile{fileInfo: fh, log: fh.log}, nil
+	return &Spfile{paramBaseInfo: fh, log: fh.log}, nil
 }
-
-
