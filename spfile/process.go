@@ -3,14 +3,12 @@ package spfile
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"myGithubLib/dds/extract/mysql/utils"
 	"regexp"
 	"strings"
 )
 
-var (
-	ProcessType    = "PROCESS"
-	ProcessRegular = "(^)(?i:(" + ProcessType + "))(\\s+)((?:[A-Za-z0-9_]){4,12})($)"
-)
+
 
 type Process struct {
 	SupportParams map[string]map[string]string
@@ -25,13 +23,13 @@ func (p *Process) Put() {
 // 初始化参数可以支持的数据库和进程
 func (p *Process) Init() {
 	p.SupportParams = map[string]map[string]string{
-		MySQL: {
-			Extract:  Extract,
-			Replicat: Replicat,
+		utils.MySQL: {
+			utils.Extract:  utils.Extract,
+			utils.Replicat: utils.Replicat,
 		},
-		MariaDB: {
-			Extract:  Extract,
-			Replicat: Replicat,
+		utils.MariaDB: {
+			utils.Extract:  utils.Extract,
+			utils.Replicat: utils.Replicat,
 		},
 	}
 }
@@ -46,7 +44,7 @@ func (p *Process) IsType(raw *string, dbType *string, processType *string) error
 }
 
 func (p *Process) Parse(raw *string) error {
-	matched, _ := regexp.MatchString(ProcessRegular, *raw)
+	matched, _ := regexp.MatchString(utils.ProcessRegular, *raw)
 	if matched == true {
 		rd := strings.Split(*raw, " ")
 		p.ParamPrefix = rd[0]
@@ -54,7 +52,7 @@ func (p *Process) Parse(raw *string) error {
 		return nil
 	}
 
-	return errors.Errorf("%s parameter parsing failed: %s", ProcessType, *raw)
+	return errors.Errorf("%s parameter parsing failed: %s", utils.ProcessType, *raw)
 }
 
 type processSet struct{}
@@ -66,5 +64,5 @@ func (p *processSet) Init() {
 }
 
 func (p *processSet) Registry() map[string]Parameter {
-	return map[string]Parameter{ProcessType: &Process{}}
+	return map[string]Parameter{utils.ProcessType: &Process{}}
 }

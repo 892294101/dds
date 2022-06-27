@@ -8,22 +8,6 @@ import (
 	"strings"
 )
 
-var (
-	SourceDBType = "SOURCEDB"
-	Port         = "PORT"
-	DataBase     = "DATABASE"
-	Types        = "TYPE"
-	UserId       = "USERID"
-	PassWord     = "PASSWORD"
-)
-
-var (
-	DefaultPort     = "3306"
-	DefaultDataBase = "test"
-	DefaultTypes    = "mysql"
-	DefaultUserId   = "root"
-)
-
 type PortModel struct {
 	Key   *string
 	Value *string
@@ -68,11 +52,11 @@ func (s *sourceDB) Put() {
 
 func (s *sourceDB) Init() {
 	s.SupportParams = map[string]map[string]string{
-		MySQL: {
-			Extract: Extract,
+		utils.MySQL: {
+			utils.Extract: utils.Extract,
 		},
-		MariaDB: {
-			Extract: Extract,
+		utils.MariaDB: {
+			utils.Extract: utils.Extract,
 		},
 	}
 	/*s.Port = new(PortModel)
@@ -98,13 +82,13 @@ func (s *sourceDB) Parse(raw *string) error {
 
 	for i := 0; i < len(sdb); i++ {
 		switch {
-		case strings.EqualFold(sdb[i], SourceDBType):
+		case strings.EqualFold(sdb[i], utils.SourceDBType):
 			s.ParamPrefix = &sdb[i]
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", SourceDBType)
+				return errors.Errorf("%s value must be specified", utils.SourceDBType)
 			}
 			NextVal := &sdb[i+1]
-			if KeyCheck(NextVal) {
+			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
 			if s.Address != nil {
@@ -118,12 +102,12 @@ func (s *sourceDB) Parse(raw *string) error {
 
 			s.Address = NextVal
 			i += 1
-		case strings.EqualFold(sdb[i], Port):
+		case strings.EqualFold(sdb[i], utils.Port):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", Port)
+				return errors.Errorf("%s value must be specified", utils.Port)
 			}
 			NextVal := &sdb[i+1]
-			if KeyCheck(NextVal) {
+			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
 			if s.Port != nil {
@@ -136,12 +120,12 @@ func (s *sourceDB) Parse(raw *string) error {
 
 			s.Port = &PortModel{Key: &sdb[i], Value: NextVal}
 			i += 1
-		case strings.EqualFold(sdb[i], DataBase):
+		case strings.EqualFold(sdb[i], utils.DataBase):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", DataBase)
+				return errors.Errorf("%s value must be specified", utils.DataBase)
 			}
 			NextVal := &sdb[i+1]
-			if KeyCheck(NextVal) {
+			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
 			if s.Database != nil {
@@ -149,12 +133,12 @@ func (s *sourceDB) Parse(raw *string) error {
 			}
 			s.Database = &DatabaseModel{Key: &sdb[i], Value: NextVal}
 			i += 1
-		case strings.EqualFold(sdb[i], Types):
+		case strings.EqualFold(sdb[i], utils.Types):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", Types)
+				return errors.Errorf("%s value must be specified", utils.Types)
 			}
 			NextVal := &sdb[i+1]
-			if KeyCheck(NextVal) {
+			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
 			if s.Type != nil {
@@ -162,12 +146,12 @@ func (s *sourceDB) Parse(raw *string) error {
 			}
 			s.Type = &TypeModel{Key: &sdb[i], Value: NextVal}
 			i += 1
-		case strings.EqualFold(sdb[i], UserId):
+		case strings.EqualFold(sdb[i], utils.UserId):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", UserId)
+				return errors.Errorf("%s value must be specified", utils.UserId)
 			}
 			NextVal := &sdb[i+1]
-			if KeyCheck(NextVal) {
+			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
 			if s.UserId != nil {
@@ -175,12 +159,12 @@ func (s *sourceDB) Parse(raw *string) error {
 			}
 			s.UserId = &UserIdModel{Key: &sdb[i], Value: NextVal}
 			i += 1
-		case strings.EqualFold(sdb[i], PassWord):
+		case strings.EqualFold(sdb[i], utils.PassWord):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", PassWord)
+				return errors.Errorf("%s value must be specified", utils.PassWord)
 			}
 			NextVal := &sdb[i+1]
-			if KeyCheck(NextVal) {
+			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
 			if s.PassWord != nil {
@@ -195,35 +179,22 @@ func (s *sourceDB) Parse(raw *string) error {
 	}
 
 	if s.Port == nil {
-		s.Port = &PortModel{Key: &Port, Value: &DefaultPort}
+		s.Port = &PortModel{Key: &utils.Port, Value: &utils.DefaultPort}
 	}
 	if s.Database == nil {
-		s.Database = &DatabaseModel{Key: &DataBase, Value: &DefaultDataBase}
+		s.Database = &DatabaseModel{Key: &utils.DataBase, Value: &utils.DefaultDataBase}
 	}
 	if s.Type == nil {
-		s.Type = &TypeModel{Key: &Types, Value: &DefaultTypes}
+		s.Type = &TypeModel{Key: &utils.Types, Value: &utils.DefaultTypes}
 	}
 	if s.UserId == nil {
-		s.UserId = &UserIdModel{Key: &UserId, Value: &DefaultUserId}
+		s.UserId = &UserIdModel{Key: &utils.UserId, Value: &utils.DefaultUserId}
 	}
 	if s.PassWord == nil {
-		return errors.Errorf("%s Password must be specified", SourceDBType)
+		return errors.Errorf("%s Password must be specified", utils.SourceDBType)
 	}
 
 	return nil
-}
-
-func KeyCheck(s *string) bool {
-	key := map[string]string{
-		strings.ToUpper(SourceDBType): SourceDBType,
-		strings.ToUpper(Port):         Port,
-		strings.ToUpper(DataBase):     DataBase,
-		strings.ToUpper(Types):        Types,
-		strings.ToUpper(UserId):       UserId,
-		strings.ToUpper(PassWord):     PassWord,
-	}
-	_, ok := key[strings.ToUpper(*s)]
-	return ok
 }
 
 type sourceDBSet struct{}
@@ -235,5 +206,5 @@ func (sd *sourceDBSet) Init() {
 }
 
 func (sd *sourceDBSet) Registry() map[string]Parameter {
-	return map[string]Parameter{SourceDBType: &sourceDB{}}
+	return map[string]Parameter{utils.SourceDBType: &sourceDB{}}
 }

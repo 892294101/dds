@@ -2,7 +2,7 @@ process httk_0001
 sourcedb 192.168.101.122 port 3306 type mysql userid root password admin!@123
 --setenv(sessioncharset=utf8)
 --sqlexec(set time_zone = '+8:00';)
-traildir ./data/httk1
+traildir ./data/httk1  size 128 keep 30 day  
 discardfile ./discard/httk1
 ddl include objname httk.*
 dboptions suppressiontrigger ignorereplicates getreplicates

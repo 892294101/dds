@@ -9,6 +9,47 @@ import (
 	"strings"
 )
 
+const (
+	MySQL    = "MySQL"
+	MariaDB  = "MariaDB"
+	Oracle   = "Oracle"
+	Extract  = "Extract"
+	Replicat = "Replicat "
+)
+
+var (
+	ProcessType    = "PROCESS"
+	ProcessRegular = "(^)(?i:(" + ProcessType + "))(\\s+)((?:[A-Za-z0-9_]){4,12})($)"
+)
+
+var (
+	SourceDBType = "SOURCEDB"
+	Port         = "PORT"
+	DataBase     = "DATABASE"
+	Types        = "TYPE"
+	UserId       = "USERID"
+	PassWord     = "PASSWORD"
+)
+
+var (
+	TrailDirType = "TRAILDIR"
+	//TrailDirRegular = "(^)(?i:(" + TrailDirType + "))(\\s+)((.+))($)"
+	TrailSizeKey          = "SIZE"
+	TrailKeepKey          = "KEEP"
+	MB                    = "MB"
+	GB                    = "GB"
+	DAY                   = "DAY"
+	DefaultTrailSize      = 128
+	DefaultTrailKeepValue = 7
+)
+
+var (
+	DefaultPort     = "3306"
+	DefaultDataBase = "test"
+	DefaultTypes    = "mysql"
+	DefaultUserId   = "root"
+)
+
 //根据执行文件路径获取程序的HOME路径
 func GetHomeDirectory() (dir *string, err error) {
 	file, _ := exec.LookPath(os.Args[0])
@@ -60,3 +101,18 @@ func TrimKeySpace(s []string) []string {
 	return deDup
 }
 
+func KeyCheck(s *string) bool {
+	key := map[string]string{
+		strings.ToUpper(SourceDBType): SourceDBType,
+		strings.ToUpper(Port):         Port,
+		strings.ToUpper(DataBase):     DataBase,
+		strings.ToUpper(Types):        Types,
+		strings.ToUpper(UserId):       UserId,
+		strings.ToUpper(PassWord):     PassWord,
+		strings.ToUpper(TrailDirType): TrailDirType,
+		strings.ToUpper(TrailSizeKey): TrailSizeKey,
+		strings.ToUpper(TrailKeepKey): TrailKeepKey,
+	}
+	_, ok := key[strings.ToUpper(*s)]
+	return ok
+}

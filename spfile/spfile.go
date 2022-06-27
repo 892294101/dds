@@ -38,14 +38,14 @@ func (s *Spfile) Production() error {
 		var pro Parameters
 		var CallType string
 		switch {
-		case utils.HasPrefixIgnoreCase(params, ProcessType):
-			CallType = ProcessType
+		case utils.HasPrefixIgnoreCase(params, utils.ProcessType):
+			CallType = utils.ProcessType
 			pro = &ProcessBus
-		case utils.HasPrefixIgnoreCase(params, SourceDBType):
-			CallType = SourceDBType
+		case utils.HasPrefixIgnoreCase(params, utils.SourceDBType):
+			CallType = utils.SourceDBType
 			pro = &sourceDBSetBus
-		case utils.HasPrefixIgnoreCase(params, TrailDirType):
-			CallType = TrailDirType
+		case utils.HasPrefixIgnoreCase(params, utils.TrailDirType):
+			CallType = utils.TrailDirType
 			pro = &trailDirBus
 		default:
 			return errors.Errorf("Unknown parameter: %s", params)
