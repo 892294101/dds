@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// 支持的数据库和进程类型
 const (
 	MySQL    = "MySQL"
 	MariaDB  = "MariaDB"
@@ -17,37 +18,53 @@ const (
 	Replicat = "Replicat "
 )
 
+// process参数
 var (
-	ProcessType    = "PROCESS"
+	ProcessType    = "PROCESS" // 参数类型
 	ProcessRegular = "(^)(?i:(" + ProcessType + "))(\\s+)((?:[A-Za-z0-9_]){4,12})($)"
 )
 
+// sourcedb参数
 var (
-	SourceDBType = "SOURCEDB"
-	Port         = "PORT"
-	DataBase     = "DATABASE"
-	Types        = "TYPE"
-	UserId       = "USERID"
-	PassWord     = "PASSWORD"
+	SourceDBType = "SOURCEDB" // 参数类型
+	Port         = "PORT"     // 端口关键字
+	DataBase     = "DATABASE" // 默认连接的数据库
+	Types        = "TYPE"     // 库类型,可选mysql mariadb
+	UserId       = "USERID"   // 连接用户
+	PassWord     = "PASSWORD" // 连接密码
+
+	DefaultPort     = "3306"  // 默认端口
+	DefaultDataBase = "test"  // 默认连接数据库
+	DefaultTypes    = "mysql" // 默认库类型
+	DefaultUserId   = "root"  // 默认用户名
 )
 
+// traildir 参数
 var (
-	TrailDirType = "TRAILDIR"
-	//TrailDirRegular = "(^)(?i:(" + TrailDirType + "))(\\s+)((.+))($)"
-	TrailSizeKey          = "SIZE"
-	TrailKeepKey          = "KEEP"
+	TrailDirType          = "TRAILDIR" // 参数类型
+	TrailSizeKey          = "SIZE"     // size关键字
+	TrailKeepKey          = "KEEP"     // keey 关键字
 	MB                    = "MB"
 	GB                    = "GB"
 	DAY                   = "DAY"
-	DefaultTrailSize      = 128
-	DefaultTrailKeepValue = 7
+	DefaultTrailMaxSize   = 128 // 默认trail文件的最大, 单位是M, 单位不可更改
+	DefaultTrailMinSize   = 16  // 默认trail文件的最小
+	DefaultTrailKeepValue = 7   // 默认trail文件保留时间,默认是天
 )
 
+// discardfile 参数
 var (
-	DefaultPort     = "3306"
-	DefaultDataBase = "test"
-	DefaultTypes    = "mysql"
-	DefaultUserId   = "root"
+	DiscardFileType    = "DISCARDFILE"
+	DiscardFileRegular = "(^)(?i:(" + DiscardFileType + "))(\\s+)((.+))($)"
+)
+
+// dboptions 参数
+var (
+	DBOptionsType      = "DBOPTIONS"
+	SuppressionTrigger = "SUPPRESSIONTRIGGER" // 表操作时抑制触发器
+	IgnoreReplicates   = "IGNOREREPLICATES"   // 忽略复制进程执行的操作
+	GetReplicates      = "GETREPLICATES"      // 获取复制进程的操作
+	IgnoreForeignkey   = "IGNOREFOREIGNKEY"   // 忽略外键约束
 )
 
 //根据执行文件路径获取程序的HOME路径

@@ -109,6 +109,11 @@ func (t *TrailDir) Parse(raw *string) error {
 			if err != nil {
 				return errors.Errorf("%s value is not a numeric integer: %s", trail[i], *NextVal)
 			}
+
+			if s < utils.DefaultTrailMinSize {
+				return errors.Errorf("%s value %s cannot be less than the minimum size %d", trail[i], *NextVal, utils.DefaultTrailMinSize)
+			}
+
 			t.TrailAttribute.SetSizeValue(&s)
 			i += 1
 		case strings.EqualFold(trail[i], utils.TrailKeepKey):
@@ -141,7 +146,7 @@ func (t *TrailDir) Parse(raw *string) error {
 			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
-			if t.TrailAttribute.KeepUnit != nil {
+			if t.TrailAttribute.GetKeepUnit() != nil {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
 
@@ -159,7 +164,7 @@ func (t *TrailDir) Parse(raw *string) error {
 	if t.TrailAttribute == nil {
 		t.TrailAttribute = &TrailAttribute{
 			SizeKey:   &utils.TrailSizeKey,
-			SizeValue: &utils.DefaultTrailSize,
+			SizeValue: &utils.DefaultTrailMaxSize,
 			SizeUnit:  &utils.MB,
 			KeepKey:   &utils.TrailKeepKey,
 			KeepValue: &utils.DefaultTrailKeepValue,
@@ -168,7 +173,7 @@ func (t *TrailDir) Parse(raw *string) error {
 	} else {
 		if t.TrailAttribute.GetSizeValue() == nil {
 			t.TrailAttribute.SetSizeKey(&utils.TrailSizeKey)
-			t.TrailAttribute.SetSizeValue(&utils.DefaultTrailSize)
+			t.TrailAttribute.SetSizeValue(&utils.DefaultTrailMaxSize)
 			t.TrailAttribute.SetSizeUnit(&utils.MB)
 		}
 		if t.TrailAttribute.GetKeepVal() == nil {

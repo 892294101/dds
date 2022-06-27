@@ -47,6 +47,11 @@ func (s *Spfile) Production() error {
 		case utils.HasPrefixIgnoreCase(params, utils.TrailDirType):
 			CallType = utils.TrailDirType
 			pro = &trailDirBus
+
+		case utils.HasPrefixIgnoreCase(params, utils.DiscardFileType):
+			CallType = utils.DiscardFileType
+			pro = &DiscardFileBus
+
 		default:
 			return errors.Errorf("Unknown parameter: %s", params)
 		}
