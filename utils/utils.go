@@ -67,6 +67,12 @@ var (
 	IgnoreForeignkey   = "IGNOREFOREIGNKEY"   // 忽略外键约束
 )
 
+// TABLE 参数
+var (
+	TableType    = "TABLE"
+	TableRegular = "(^)(?i:(TABLE))(\\s+)((\\S+)(\\.)(\\S+)(;))($)"
+)
+
 //根据执行文件路径获取程序的HOME路径
 func GetHomeDirectory() (dir *string, err error) {
 	file, _ := exec.LookPath(os.Args[0])

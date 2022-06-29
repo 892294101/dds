@@ -42,8 +42,8 @@ type TrailDir struct {
 	TrailAttribute *TrailAttribute
 }
 
-func (t *TrailDir) Put() {
-	fmt.Println("traildir Info:", *t.ParamPrefix, *t.Dir, *t.TrailAttribute.GetSizeKey(), *t.TrailAttribute.GetSizeValue(), *t.TrailAttribute.GetKeepKey(), *t.TrailAttribute.GetKeepVal(), *t.TrailAttribute.GetKeepUnit())
+func (t *TrailDir) Put() string {
+	return fmt.Sprintf("%s %s %s %d %s %d %s", *t.ParamPrefix, *t.Dir, *t.TrailAttribute.GetSizeKey(), *t.TrailAttribute.GetSizeValue(), *t.TrailAttribute.GetKeepKey(), *t.TrailAttribute.GetKeepVal(), *t.TrailAttribute.GetKeepUnit())
 }
 
 // 初始化参数可以支持的数据库和进程
@@ -58,6 +58,10 @@ func (t *TrailDir) Init() {
 			utils.Replicat: utils.Replicat,
 		},
 	}
+}
+
+func (t *TrailDir) InitDefault() error {
+	return nil
 }
 
 func (t *TrailDir) IsType(raw *string, dbType *string, processType *string) error {
@@ -187,14 +191,29 @@ func (t *TrailDir) Parse(raw *string) error {
 	return nil
 }
 
-type trailDirSet struct{}
+func (t *TrailDir) Add(raw *string) error {
+
+	return nil
+}
+type trailDirSet struct {
+	traildir *TrailDir
+}
 
 var trailDirBus trailDirSet
 
 func (t *trailDirSet) Init() {
+	t.traildir = new(TrailDir)
+}
 
+func (t *trailDirSet) Add(raw *string) error {
+	return nil
+}
+
+func (t *trailDirSet) ListParamText() string {
+	return t.traildir.Put()
 }
 
 func (t *trailDirSet) Registry() map[string]Parameter {
-	return map[string]Parameter{utils.TrailDirType: &TrailDir{}}
+	t.Init()
+	return map[string]Parameter{utils.TrailDirType: t.traildir}
 }

@@ -13,8 +13,8 @@ type DiscardFile struct {
 	Dir           *string
 }
 
-func (d *DiscardFile) Put() {
-	fmt.Println("discardfile Info:", *d.ParamPrefix, *d.Dir)
+func (d *DiscardFile) Put() string {
+	return fmt.Sprintf("%s %s", *d.ParamPrefix, *d.Dir)
 }
 
 func (d *DiscardFile) Init() {
@@ -28,6 +28,10 @@ func (d *DiscardFile) Init() {
 			utils.Replicat: utils.Replicat,
 		},
 	}
+}
+
+func (d *DiscardFile) InitDefault() error {
+	return nil
 }
 
 func (d *DiscardFile) IsType(raw *string, dbType *string, processType *string) error {
@@ -66,14 +70,29 @@ func (d *DiscardFile) Parse(raw *string) error {
 	return nil
 }
 
-type DiscardFileSet struct{}
+func (d *DiscardFile) Add(raw *string) error {
+
+	return nil
+}
+type DiscardFileSet struct {
+	discard *DiscardFile
+}
 
 var DiscardFileBus DiscardFileSet
 
 func (t *DiscardFileSet) Init() {
+	t.discard = new(DiscardFile)
+}
 
+func (t *DiscardFileSet) Add(raw *string) error {
+	return nil
+}
+
+func (t *DiscardFileSet) ListParamText() string {
+	return t.discard.Put()
 }
 
 func (t *DiscardFileSet) Registry() map[string]Parameter {
-	return map[string]Parameter{utils.DiscardFileType: &DiscardFile{}}
+	t.Init()
+	return map[string]Parameter{utils.DiscardFileType: t.discard}
 }

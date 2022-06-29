@@ -8,16 +8,14 @@ import (
 	"strings"
 )
 
-
-
 type Process struct {
 	SupportParams map[string]map[string]string
 	ParamPrefix   string
 	Name          string
 }
 
-func (p *Process) Put() {
-	fmt.Println("process Info:", p.ParamPrefix, p.Name)
+func (p *Process) Put() string {
+	return fmt.Sprintf("%s %s", p.ParamPrefix, p.Name)
 }
 
 // 初始化参数可以支持的数据库和进程
@@ -32,6 +30,10 @@ func (p *Process) Init() {
 			utils.Replicat: utils.Replicat,
 		},
 	}
+}
+
+func (p *Process) InitDefault() error {
+	return nil
 }
 
 func (p *Process) IsType(raw *string, dbType *string, processType *string) error {
@@ -55,14 +57,28 @@ func (p *Process) Parse(raw *string) error {
 	return errors.Errorf("%s parameter parsing failed: %s", utils.ProcessType, *raw)
 }
 
-type processSet struct{}
+func (p *Process) Add(raw *string) error {
+	return nil
+}
+type processSet struct {
+	process *Process
+}
 
 var ProcessBus processSet
 
 func (p *processSet) Init() {
+	p.process = new(Process)
+}
 
+func (p *processSet) Add(raw *string) error {
+	return nil
+}
+
+func (p *processSet) ListParamText() string {
+	return p.process.Put()
 }
 
 func (p *processSet) Registry() map[string]Parameter {
-	return map[string]Parameter{utils.ProcessType: &Process{}}
+	p.Init()
+	return map[string]Parameter{utils.ProcessType: p.process}
 }

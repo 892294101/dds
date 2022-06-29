@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"myGithubLib/dds/extract/mysql/spfile"
+	"os"
 )
 
 func main() {
@@ -17,11 +18,15 @@ func main() {
 		spfile.GetExtractName())
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	if err := p.Production(); err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
+	
+	p.PutParamsText()
 
 	/*log, err := ddslog.InitDDSlog()
 	if err != nil {

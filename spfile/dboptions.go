@@ -11,16 +11,45 @@ type Options struct {
 	Opts map[string]bool
 }
 
+func (o *Options) SetOption(s *string) error {
+	ops := strings.ToUpper(*s)
+	switch ops {
+	case utils.GetReplicates:
+		o.Opts[utils.GetReplicates] = true
+	case utils.IgnoreReplicates:
+		o.Opts[utils.GetReplicates] = false
+	default:
+		ops := strings.ToUpper(*s)
+		_, ok := o.Opts[ops]
+		if ok {
+			o.Opts[ops] = true
+		} else {
+			return errors.Errorf("unknown parameter: %s", *s)
+		}
+	}
+	return nil
+}
+
+func (o *Options) GetOption(s *string) {
+
+}
+
 type DBOptions struct {
 	SupportParams map[string]map[string]string
 	ParamPrefix   *string
 	OptionsSet    *Options
 }
 
-func (d *DBOptions) Put() {
-	fmt.Println("discardfile Info:", *d.ParamPrefix, *d.OptionsSet)
+func (d *DBOptions) Put() string {
+	var msg string
+	msg += fmt.Sprintf("%s", *d.ParamPrefix)
+	for s, b := range d.OptionsSet.Opts {
+		msg += fmt.Sprintf(" %s %v", s, b)
+	}
+	return msg
 }
 
+// 当传入参数时, 初始化特定参数的值
 func (d *DBOptions) Init() {
 	d.SupportParams = map[string]map[string]string{
 		utils.MySQL: {
@@ -35,11 +64,17 @@ func (d *DBOptions) Init() {
 	d.OptionsSet = &Options{
 		Opts: map[string]bool{
 			utils.SuppressionTrigger: false,
-			utils.IgnoreReplicates:   false,
-			utils.GetReplicates:      false,
 			utils.IgnoreForeignkey:   false,
+			utils.GetReplicates:      false,
 		},
 	}
+}
+
+// 当没有参数时, 初始化此参数默认值
+func (d *DBOptions) InitDefault() error {
+	d.Init()
+	d.ParamPrefix = &utils.DBOptionsType
+	return nil
 }
 
 func (d *DBOptions) IsType(raw *string, dbType *string, processType *string) error {
@@ -60,24 +95,41 @@ func (d *DBOptions) Parse(raw *string) error {
 			if i+1 > optionsLength {
 				return errors.Errorf("%s value must be specified", options[i])
 			}
+		} else {
+			err := d.OptionsSet.SetOption(&options[i])
+			if err != nil {
+				return err
+			}
 		}
-		_, ok := d.OptionsSet.Opts[options[i]]
-		if ok {
-			d.OptionsSet.Opts[strings.ToUpper(options[i])] = true
-		}
+
 	}
 
 	return nil
 }
 
-type DBOptionsSet struct{}
+func (d *DBOptions) Add(raw *string) error {
+	return nil
+}
+
+type DBOptionsSet struct {
+	dbOps *DBOptions
+}
 
 var DBOptionsBus DBOptionsSet
 
 func (d *DBOptionsSet) Init() {
+	d.dbOps = new(DBOptions)
+}
 
+func (d *DBOptionsSet) Add(raw *string) error {
+	return nil
+}
+
+func (d *DBOptionsSet) ListParamText() string {
+	return d.dbOps.Put()
 }
 
 func (d *DBOptionsSet) Registry() map[string]Parameter {
-	return map[string]Parameter{utils.DBOptionsType: &DBOptions{}}
+	d.Init()
+	return map[string]Parameter{utils.DBOptionsType: d.dbOps}
 }

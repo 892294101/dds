@@ -15,8 +15,6 @@ const (
 		"($)"*/
 )
 
-
-
 func GetMySQLName() string {
 	return utils.MySQL
 }
@@ -34,11 +32,15 @@ func GetExtractName() string {
 
 type Module interface {
 	Init()
+	Add(raw *string) error
+	ListParamText() string
 }
 
 type Parameter interface {
-	Put()
+	Put() string
 	Init()
+	Add(raw *string) error
+	InitDefault() error
 	IsType(raw *string, dbType *string, processType *string) error
 	Parse(raw *string) error
 }

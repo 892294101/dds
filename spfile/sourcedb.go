@@ -44,8 +44,8 @@ type sourceDB struct {
 	PassWord      *PassWordModel               // 密码
 }
 
-func (s *sourceDB) Put() {
-	fmt.Println("sourceDB Info:", *s.ParamPrefix, *s.Address, *s.Port.Key, *s.Port.Value, *s.Database.Key, *s.Database.Value, *s.Type.Key, *s.Type.Value, *s.UserId.Key, *s.UserId.Value, *s.PassWord.Key, *s.PassWord.Value)
+func (s *sourceDB) Put() string {
+	return fmt.Sprintf("%s %s %s %s %s %s %s %s %s %s %s %s", *s.ParamPrefix, *s.Address, *s.Port.Key, *s.Port.Value, *s.Database.Key, *s.Database.Value, *s.Type.Key, *s.Type.Value, *s.UserId.Key, *s.UserId.Value, *s.PassWord.Key, *s.PassWord.Value)
 }
 
 // 初始化参数可以支持的数据库和进程
@@ -65,6 +65,10 @@ func (s *sourceDB) Init() {
 	s.UserId = new(UserIdModel)
 	s.PassWord = new(PassWordModel)
 	*/
+}
+
+func (s *sourceDB) InitDefault() error {
+	return nil
 }
 
 func (s *sourceDB) IsType(raw *string, dbType *string, processType *string) error {
@@ -197,14 +201,29 @@ func (s *sourceDB) Parse(raw *string) error {
 	return nil
 }
 
-type sourceDBSet struct{}
+func (s *sourceDB) Add(raw *string) error {
+	return nil
+}
+
+type sourceDBSet struct {
+	sdb *sourceDB
+}
 
 var sourceDBSetBus sourceDBSet
 
 func (sd *sourceDBSet) Init() {
+	sd.sdb = new(sourceDB)
+}
 
+func (sd *sourceDBSet) Add(raw *string) error {
+	return nil
+}
+
+func (sd *sourceDBSet) ListParamText() string {
+	return sd.sdb.Put()
 }
 
 func (sd *sourceDBSet) Registry() map[string]Parameter {
-	return map[string]Parameter{utils.SourceDBType: &sourceDB{}}
+	sd.Init()
+	return map[string]Parameter{utils.SourceDBType: sd.sdb}
 }
