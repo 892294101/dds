@@ -70,8 +70,15 @@ var (
 // TABLE 参数
 var (
 	TableType    = "TABLE"
-	TableRegular = "(^)(?i:(TABLE))(\\s+)((\\S+)(\\.)(\\S+)(;))($)"
+	TableRegular = "(^)(?i:(" + TableType + "))(\\s+)((\\S+)(\\.)(\\S+\\s*)(;))($)"
 )
+
+// TABLEExclude 参数
+var (
+	TableExcludeType    = "TABLEEXCLUDE"
+	TableExcludeRegular = "(^)(?i:(" + TableExcludeType + "))(\\s+)((\\S+)(\\.)(\\S+\\s*)(;))($)"
+)
+
 
 //根据执行文件路径获取程序的HOME路径
 func GetHomeDirectory() (dir *string, err error) {

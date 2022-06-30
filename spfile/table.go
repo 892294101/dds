@@ -5,7 +5,6 @@ import (
 	"github.com/pkg/errors"
 	"myGithubLib/dds/extract/mysql/utils"
 	"regexp"
-	"strings"
 )
 
 type OwnerTable struct {
@@ -29,11 +28,13 @@ type TableSets struct {
 
 func (t *TableSets) Put() string {
 	var msg string
-	for _, index := range t.TableListIndex {
-
+	for i, index := range t.TableListIndex {
 		_, ok := t.TableList[index]
 		if ok {
-			msg += fmt.Sprintf("%s %s.%s\n", *t.ParamPrefix, index.OwnerValue, index.TableValue)
+			if i > 0 {
+				msg += fmt.Sprintf("\n")
+			}
+			msg += fmt.Sprintf("%s %s.%s", *t.ParamPrefix, index.OwnerValue, index.TableValue)
 		}
 
 	}
@@ -74,14 +75,40 @@ func (t *TableSets) IsType(raw *string, dbType *string, processType *string) err
 
 // 新参数进入后, 第一次需要进入解析动作
 func (t *TableSets) Parse(raw *string) error {
-	matched, _ := regexp.MatchString(utils.TableRegular, *raw)
+	reg, err := regexp.Compile(utils.TableRegular)
+	if reg == nil || err != nil {
+		return errors.Errorf("%s parameter Regular compilation error: %s", utils.TableType, *raw)
+	}
+
+	result := reg.FindStringSubmatch(*raw)
+	if len(result) < 1 {
+		return errors.Errorf("%s parameter Regular get substring error: %s", utils.TableType, *raw)
+	}
+	result = utils.TrimKeySpace(result)
+
+	if t.ParamPrefix == nil {
+		t.ParamPrefix = &result[1]
+	}
+
+	ownerTable := OwnerTable{result[3], result[5]}
+	_, ok := t.TableList[ownerTable]
+	if !ok {
+		t.TableList[ownerTable] = nil
+		t.TableListIndex = append(t.TableListIndex, ownerTable)
+	}
+
+	return nil
+	/*matched, _ := regexp.MatchString(utils.TableRegular, *raw)
 	if matched == true {
-		tab := utils.TrimKeySpace(strings.Split(*raw, " "))
+		rawText := *raw
+		rawText = rawText[:len(rawText)-1]
+
+		tab := utils.TrimKeySpace(strings.Split(rawText, " "))
 		for i := 0; i < len(tab); i++ {
 			if strings.EqualFold(tab[i], utils.TableType) {
 				t.ParamPrefix = &tab[i]
 			} else {
-				tabVal := strings.Split(tab[i][:len(tab[i])-1], ".")
+				tabVal := strings.Split(tab[i], ".")
 				ownerTable := OwnerTable{tabVal[0], tabVal[1]}
 				_, ok := t.TableList[ownerTable]
 				if !ok {
@@ -98,48 +125,40 @@ func (t *TableSets) Parse(raw *string) error {
 		return errors.Errorf("%s parameter must end with a semicolon: %s", utils.TableType, *raw)
 	}
 
-	return errors.Errorf("Incorrect %s parameter user(or db) and table name rules: %s", utils.TableType, *raw)
-
-	/*if ok := strings.HasSuffix(*raw, utils.TableRawDataSuffix); !ok {
-		return errors.Errorf("%s parameter must end with a semicolon: %s", utils.TableType, *raw)
-	}
-
-	tab := strings.Split(*raw, " ")
-	if len(tab) != 2 {
-		return errors.Errorf("%s Parameter length mismatch: %s", utils.TableType, *raw)
-	}
-
-	tabLength := len(tab) - 1
-	for i := 0; i < len(tab); i++ {
-		if strings.EqualFold(tab[i], utils.TableType) {
-			t.ParamPrefix = &tab[i]
-			if i+1 > tabLength {
-				return errors.Errorf("%s value must be specified", tab[i])
-			}
-		} else {
-			tabVal := strings.Split(tab[i][:len(tab[i])-1], ".")
-			ownerTable := OwnerTable{tabVal[0], tabVal[1]}
-			_, ok := t.TableList[ownerTable]
-			if !ok {
-				t.TableList[ownerTable] = nil
-				t.TableListIndex = append(t.TableListIndex, ownerTable)
-			}
-
-		}
-	}*/
-
+	return errors.Errorf("Incorrect %s parameter user(or db) and table name rules: %s", utils.TableType, *raw)*/
 }
 
 // 当出现第二次参数进入, 需要进入add动作
 func (t *TableSets) Add(raw *string) error {
-	matched, _ := regexp.MatchString(utils.TableRegular, *raw)
+	reg, err := regexp.Compile(utils.TableRegular)
+	if reg == nil || err != nil {
+		return errors.Errorf("%s parameter Regular compilation error: %s", utils.TableType, *raw)
+	}
+
+	result := reg.FindStringSubmatch(*raw)
+	if len(result) < 1 {
+		return errors.Errorf("%s parameter Regular get substring error: %s", utils.TableType, *raw)
+	}
+	result = utils.TrimKeySpace(result)
+
+	ownerTable := OwnerTable{result[3], result[5]}
+	_, ok := t.TableList[ownerTable]
+	if !ok {
+		t.TableList[ownerTable] = nil
+		t.TableListIndex = append(t.TableListIndex, ownerTable)
+	}
+
+	/*matched, _ := regexp.MatchString(utils.TableRegular, *raw)
 	if matched == true {
-		tab := utils.TrimKeySpace(strings.Split(*raw, " "))
+		rawText := *raw
+		rawText = rawText[:len(rawText)-1]
+
+		tab := utils.TrimKeySpace(strings.Split(rawText, " "))
 		for i := 0; i < len(tab); i++ {
 			if strings.EqualFold(tab[i], utils.TableType) {
 				t.ParamPrefix = &tab[i]
 			} else {
-				tabVal := strings.Split(tab[i][:len(tab[i])-1], ".")
+				tabVal := strings.Split(tab[i], ".")
 				ownerTable := OwnerTable{tabVal[0], tabVal[1]}
 				_, ok := t.TableList[ownerTable]
 				if !ok {
@@ -155,29 +174,8 @@ func (t *TableSets) Add(raw *string) error {
 		return errors.Errorf("%s parameter must end with a semicolon: %s", utils.TableType, *raw)
 	}
 	return errors.Errorf("Incorrect %s parameter user(or db) and table name rules: %s", utils.TableType, *raw)
-
-	/*tab := strings.Split(*raw, " ")
-	tabLength := len(tab) - 1
-	if len(tab) != 2 {
-		return errors.Errorf("%s Parameter length mismatch: %s", utils.TableType, *raw)
-	}
-	for i := 0; i < len(tab); i++ {
-		if strings.EqualFold(tab[i], utils.TableType) {
-			if i+1 > tabLength {
-				return errors.Errorf("%s value must be specified", tab[i])
-			}
-		} else {
-			tabVal := strings.Split(tab[i][:len(tab[i])-1], ".")
-			ownerTable := OwnerTable{tabVal[0], tabVal[1]}
-			_, ok := t.TableList[ownerTable]
-			if !ok {
-				t.TableList[ownerTable] = nil
-				t.TableListIndex = append(t.TableListIndex, ownerTable)
-			}
-
-		}
-	}*/
-
+	*/
+	return nil
 }
 
 type TableSet struct {

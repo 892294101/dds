@@ -36,9 +36,6 @@ func (s *Spfile) init() error {
 		s.mustParams = append(s.mustParams, utils.DiscardFileType)
 		s.mustParams = append(s.mustParams, utils.DBOptionsType)
 		s.mustParams = append(s.mustParams, utils.TableType)
-		/*
-			s.mustParams = append(s.mustParams, utils.DBOp)
-		*/
 	}
 
 	return nil
@@ -115,7 +112,7 @@ func (s *Spfile) scanParams() error {
 				return errors.Errorf("%s configuration cannot be set repeatedly", utils.DBOptionsType)
 			}
 
-		case utils.HasPrefixIgnoreCase(params, utils.TableType):
+		case utils.HasPrefixIgnoreCase(params, utils.TableType+" "):
 			if s.paramSet[utils.TableType] == nil {
 				pro = &TableSetBus
 				if err := s.firstParams(pro, &params); err != nil {
@@ -123,6 +120,18 @@ func (s *Spfile) scanParams() error {
 				}
 			} else {
 				pro = s.paramSet[utils.TableType]
+				if err := s.addParams(pro, &params); err != nil {
+					return err
+				}
+			}
+		case utils.HasPrefixIgnoreCase(params, utils.TableExcludeType):
+			if s.paramSet[utils.TableExcludeType] == nil {
+				pro = &ExcludeTableSetBus
+				if err := s.firstParams(pro, &params); err != nil {
+					return err
+				}
+			} else {
+				pro = s.paramSet[utils.TableExcludeType]
 				if err := s.addParams(pro, &params); err != nil {
 					return err
 				}

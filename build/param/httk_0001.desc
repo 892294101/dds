@@ -8,10 +8,23 @@ discardfile ./discard/httk1
 dboptions ignorereplicates suppressiontrigger ignoreforeignkey
 --ignorereplicates getreplicates suppressiontrigger ignoreforeignkey
 
-table    httk.test01;
-table    httk.test02;
-table      httk.test03;
+ table httk.test01;
+table httk.test02;
+table httk.test03;
+table httk.test04;
+table httk.test05;
 
---tableexclude httk.test*
+
+
+tableexclude httk.test1;
+tableexclude httk.test2;
+
+tableexclude httk.test1;
+tableexclude httk.test2;
+
+
+
+
+
 
 

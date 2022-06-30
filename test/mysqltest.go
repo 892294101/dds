@@ -25,7 +25,7 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	
+
 	p.PutParamsText()
 
 	/*log, err := ddslog.InitDDSlog()
