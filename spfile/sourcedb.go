@@ -5,53 +5,79 @@ import (
 	"github.com/pkg/errors"
 	"myGithubLib/dds/extract/mysql/utils"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
 type PortModel struct {
-	Key   *string
-	Value *string
-}
-
-type DatabaseModel struct {
-	Key   *string
-	Value *string
+	key   *string
+	value *uint16
 }
 
 type TypeModel struct {
-	Key   *string
-	Value *string
+	key   *string
+	value *string
 }
 
 type UserIdModel struct {
-	Key   *string
-	Value *string
+	key   *string
+	value *string
 }
 
 type PassWordModel struct {
-	Key   *string
-	Value *string
+	key   *string
+	value *string
 }
 
-type sourceDB struct {
-	SupportParams map[string]map[string]string // 参数支持吃数据库和进程
-	ParamPrefix   *string                      // 参数前缀
-	Address       *string                      // 数据库地址
-	Port          *PortModel                   // 数据库端口
-	Database      *DatabaseModel               // 连接的数据库
-	Type          *TypeModel                   // 连接数据库类型, mysql或 mariadb
-	UserId        *UserIdModel                 // 用户名
-	PassWord      *PassWordModel               // 密码
+type ServerIdModel struct {
+	key   *string
+	value *uint32
 }
 
-func (s *sourceDB) Put() string {
-	return fmt.Sprintf("%s %s %s %s %s %s %s %s %s %s %s %s", *s.ParamPrefix, *s.Address, *s.Port.Key, *s.Port.Value, *s.Database.Key, *s.Database.Value, *s.Type.Key, *s.Type.Value, *s.UserId.Key, *s.UserId.Value, *s.PassWord.Key, *s.PassWord.Value)
+type RetryMaxConnect struct {
+	key   *string
+	value *int
+}
+
+type ClientCharacterSet struct {
+	key   *string
+	value *string
+}
+
+type dbInfo struct {
+	address            *string             // 数据库地址
+	port               *PortModel          // 数据库端口
+	types              *TypeModel          // 连接数据库类型, mysql或 mariadb
+	userId             *UserIdModel        // 用户名
+	passWord           *PassWordModel      // 密码
+	serverId           *ServerIdModel      // mysql server id
+	retryMaxConnNumber *RetryMaxConnect    // 连接重连最大次数
+	clientCharacter    *ClientCharacterSet // 客户端字符集
+}
+
+func (d *dbInfo) GetAddress() *string         { return d.address }
+func (d *dbInfo) GetPort() *uint16            { return d.port.value }
+func (d *dbInfo) GetTypes() *string           { return d.types.value }
+func (d *dbInfo) GetUserId() *string          { return d.userId.value }
+func (d *dbInfo) GetPassWord() *string        { return d.passWord.value }
+func (d *dbInfo) GetServerID() *uint32        { return d.serverId.value }
+func (d *dbInfo) GetRetryConnect() *int       { return d.retryMaxConnNumber.value }
+func (d *dbInfo) GetClientCharacter() *string { return d.clientCharacter.value }
+
+type SourceDB struct {
+	supportParams map[string]map[string]string // 参数支持吃数据库和进程
+	paramPrefix   *string                      // 参数前缀
+	DBInfo        *dbInfo
+}
+
+func (s *SourceDB) put() string {
+	return fmt.Sprintf("%s %s %s %d %s %s %s %s %s %s %s %d", *s.paramPrefix, *s.DBInfo.address, *s.DBInfo.port.key, *s.DBInfo.port.value, *s.DBInfo.types.key, *s.DBInfo.types.value, *s.DBInfo.userId.key, *s.DBInfo.userId.value, *s.DBInfo.passWord.key, *s.DBInfo.passWord.value, *s.DBInfo.serverId.key, *s.DBInfo.serverId.value)
 }
 
 // 初始化参数可以支持的数据库和进程
 
-func (s *sourceDB) Init() {
-	s.SupportParams = map[string]map[string]string{
+func (s *SourceDB) init() {
+	s.supportParams = map[string]map[string]string{
 		utils.MySQL: {
 			utils.Extract: utils.Extract,
 		},
@@ -67,27 +93,27 @@ func (s *sourceDB) Init() {
 	*/
 }
 
-func (s *sourceDB) InitDefault() error {
+func (s *SourceDB) initDefault() error {
 	return nil
 }
 
-func (s *sourceDB) IsType(raw *string, dbType *string, processType *string) error {
-	s.Init()
-	_, ok := s.SupportParams[*dbType][*processType]
+func (s *SourceDB) isType(raw *string, dbType *string, processType *string) error {
+	s.init()
+	_, ok := s.supportParams[*dbType][*processType]
 	if ok {
 		return nil
 	}
 	return errors.Errorf("The %s %s process does not support this parameter: %s", *dbType, *processType, *raw)
 }
 
-func (s *sourceDB) Parse(raw *string) error {
+func (s *SourceDB) parse(raw *string) error {
 	sdb := utils.TrimKeySpace(strings.Split(*raw, " "))
 	sdbLength := len(sdb) - 1
 
 	for i := 0; i < len(sdb); i++ {
 		switch {
 		case strings.EqualFold(sdb[i], utils.SourceDBType):
-			s.ParamPrefix = &sdb[i]
+			s.paramPrefix = &sdb[i]
 			if i+1 > sdbLength {
 				return errors.Errorf("%s value must be specified", utils.SourceDBType)
 			}
@@ -95,7 +121,7 @@ func (s *sourceDB) Parse(raw *string) error {
 			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
-			if s.Address != nil {
+			if s.DBInfo.address != nil {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
 
@@ -104,7 +130,7 @@ func (s *sourceDB) Parse(raw *string) error {
 				return errors.Errorf("%s is an illegal IPV4 address\n", *NextVal)
 			}
 
-			s.Address = NextVal
+			s.DBInfo.address = NextVal
 			i += 1
 		case strings.EqualFold(sdb[i], utils.Port):
 			if i+1 > sdbLength {
@@ -114,7 +140,7 @@ func (s *sourceDB) Parse(raw *string) error {
 			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
-			if s.Port != nil {
+			if s.DBInfo.port != nil {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
 			match, _ := regexp.MatchString(IpV4Port, *NextVal)
@@ -122,20 +148,12 @@ func (s *sourceDB) Parse(raw *string) error {
 				return errors.Errorf("%s is an illegal IPV4 Port\n", *NextVal)
 			}
 
-			s.Port = &PortModel{Key: &sdb[i], Value: NextVal}
-			i += 1
-		case strings.EqualFold(sdb[i], utils.DataBase):
-			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.DataBase)
+			p, err := strconv.Atoi(*NextVal)
+			if err != nil {
+				return errors.Errorf("%s Port conversion failed", *NextVal)
 			}
-			NextVal := &sdb[i+1]
-			if utils.KeyCheck(NextVal) {
-				return errors.Errorf("keywords cannot be used: %s", *NextVal)
-			}
-			if s.Database != nil {
-				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
-			}
-			s.Database = &DatabaseModel{Key: &sdb[i], Value: NextVal}
+			port := uint16(p)
+			s.DBInfo.port = &PortModel{key: &sdb[i], value: &port}
 			i += 1
 		case strings.EqualFold(sdb[i], utils.Types):
 			if i+1 > sdbLength {
@@ -145,10 +163,10 @@ func (s *sourceDB) Parse(raw *string) error {
 			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
-			if s.Type != nil {
+			if s.DBInfo.types != nil {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
-			s.Type = &TypeModel{Key: &sdb[i], Value: NextVal}
+			s.DBInfo.types = &TypeModel{key: &sdb[i], value: NextVal}
 			i += 1
 		case strings.EqualFold(sdb[i], utils.UserId):
 			if i+1 > sdbLength {
@@ -158,10 +176,10 @@ func (s *sourceDB) Parse(raw *string) error {
 			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
-			if s.UserId != nil {
+			if s.DBInfo.userId != nil {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
-			s.UserId = &UserIdModel{Key: &sdb[i], Value: NextVal}
+			s.DBInfo.userId = &UserIdModel{key: &sdb[i], value: NextVal}
 			i += 1
 		case strings.EqualFold(sdb[i], utils.PassWord):
 			if i+1 > sdbLength {
@@ -171,48 +189,112 @@ func (s *sourceDB) Parse(raw *string) error {
 			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
-			if s.PassWord != nil {
+			if s.DBInfo.passWord != nil {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
-			s.PassWord = &PassWordModel{Key: &sdb[i], Value: NextVal}
+			s.DBInfo.passWord = &PassWordModel{key: &sdb[i], value: NextVal}
+			i += 1
+		case strings.EqualFold(sdb[i], utils.ServerId):
+			if i+1 > sdbLength {
+				return errors.Errorf("%s value must be specified", utils.ServerId)
+			}
+			NextVal := &sdb[i+1]
+			if utils.KeyCheck(NextVal) {
+				return errors.Errorf("keywords cannot be used: %s", *NextVal)
+			}
+			if s.DBInfo.serverId != nil {
+				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
+			}
+
+			p, err := strconv.Atoi(*NextVal)
+			if err != nil {
+				return errors.Errorf("%s server id conversion failed", *NextVal)
+			}
+			id := uint32(p)
+			s.DBInfo.serverId = &ServerIdModel{key: &sdb[i], value: &id}
+			i += 1
+		case strings.EqualFold(sdb[i], utils.Retry):
+			if i+1 > sdbLength {
+				return errors.Errorf("%s value must be specified", utils.Retry)
+			}
+			NextVal := &sdb[i+1]
+			if utils.KeyCheck(NextVal) {
+				return errors.Errorf("keywords cannot be used: %s", *NextVal)
+			}
+			if s.DBInfo.retryMaxConnNumber != nil {
+				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
+			}
+
+			p, err := strconv.Atoi(*NextVal)
+			if err != nil {
+				return errors.Errorf("%s %s conversion failed", *NextVal, utils.Retry)
+			}
+			retryNum := int(p)
+
+			if retryNum > 3 && retryNum < 12 {
+				s.DBInfo.retryMaxConnNumber = &RetryMaxConnect{key: &sdb[i], value: &retryNum}
+			}
+			i += 1
+		case strings.EqualFold(sdb[i], utils.Character):
+			if i+1 > sdbLength {
+				return errors.Errorf("%s value must be specified", utils.Character)
+			}
+			NextVal := &sdb[i+1]
+			if utils.KeyCheck(NextVal) {
+				return errors.Errorf("keywords cannot be used: %s", *NextVal)
+			}
+			if s.DBInfo.clientCharacter != nil {
+				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
+			}
+			s.DBInfo.clientCharacter = &ClientCharacterSet{key: &sdb[i], value: NextVal}
 			i += 1
 		default:
-			return errors.Errorf("unknown parameter: %s", sdb[i])
+			return errors.Errorf("unknown keyword: %s", sdb[i])
 		}
 
 	}
 
-	if s.Port == nil {
-		s.Port = &PortModel{Key: &utils.Port, Value: &utils.DefaultPort}
+	if s.DBInfo.port == nil {
+		s.DBInfo.port = &PortModel{key: &utils.Port, value: &utils.DefaultPort}
 	}
-	if s.Database == nil {
-		s.Database = &DatabaseModel{Key: &utils.DataBase, Value: &utils.DefaultDataBase}
+	if s.DBInfo.types == nil {
+		s.DBInfo.types = &TypeModel{key: &utils.Types, value: &utils.DefaultTypes}
 	}
-	if s.Type == nil {
-		s.Type = &TypeModel{Key: &utils.Types, Value: &utils.DefaultTypes}
+	if s.DBInfo.userId == nil {
+		s.DBInfo.userId = &UserIdModel{key: &utils.UserId, value: &utils.DefaultUserId}
 	}
-	if s.UserId == nil {
-		s.UserId = &UserIdModel{Key: &utils.UserId, Value: &utils.DefaultUserId}
+	if s.DBInfo.serverId == nil {
+		return errors.Errorf("%s %s must be specified", utils.SourceDBType, utils.ServerId)
 	}
-	if s.PassWord == nil {
-		return errors.Errorf("%s Password must be specified", utils.SourceDBType)
+
+	if s.DBInfo.retryMaxConnNumber == nil {
+		s.DBInfo.retryMaxConnNumber = &RetryMaxConnect{key: &utils.Retry, value: &utils.DefaultMaxRetryConnect}
+	}
+
+	if s.DBInfo.clientCharacter == nil {
+		s.DBInfo.clientCharacter = &ClientCharacterSet{key: &utils.Character, value: &utils.DefaultClientCharacter}
+	}
+
+	if s.DBInfo.passWord == nil {
+		return errors.Errorf("%s %s must be specified", utils.SourceDBType, utils.PassWord)
 	}
 
 	return nil
 }
 
-func (s *sourceDB) Add(raw *string) error {
+func (s *SourceDB) add(raw *string) error {
 	return nil
 }
 
 type sourceDBSet struct {
-	sdb *sourceDB
+	sdb *SourceDB
 }
 
 var sourceDBSetBus sourceDBSet
 
 func (sd *sourceDBSet) Init() {
-	sd.sdb = new(sourceDB)
+	sd.sdb = new(SourceDB)
+	sd.sdb.DBInfo = new(dbInfo)
 }
 
 func (sd *sourceDBSet) Add(raw *string) error {
@@ -220,7 +302,11 @@ func (sd *sourceDBSet) Add(raw *string) error {
 }
 
 func (sd *sourceDBSet) ListParamText() string {
-	return sd.sdb.Put()
+	return sd.sdb.put()
+}
+
+func (sd *sourceDBSet) GetParam() interface{} {
+	return sd.sdb
 }
 
 func (sd *sourceDBSet) Registry() map[string]Parameter {

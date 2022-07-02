@@ -30,19 +30,24 @@ func GetExtractName() string {
 	return utils.Extract
 }
 
+func GetDBOptionsName() string {
+	return utils.DBOptionsType
+}
+
 type Module interface {
 	Init()
 	Add(raw *string) error
 	ListParamText() string
+	GetParam() interface{}
 }
 
 type Parameter interface {
-	Put() string
-	Init()
-	Add(raw *string) error
-	InitDefault() error
-	IsType(raw *string, dbType *string, processType *string) error
-	Parse(raw *string) error
+	put() string
+	init()
+	add(raw *string) error
+	initDefault() error
+	isType(raw *string, dbType *string, processType *string) error
+	parse(raw *string) error
 }
 
 type Parameters interface {

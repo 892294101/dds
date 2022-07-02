@@ -26,17 +26,22 @@ var (
 
 // sourcedb参数
 var (
-	SourceDBType = "SOURCEDB" // 参数类型
-	Port         = "PORT"     // 端口关键字
-	DataBase     = "DATABASE" // 默认连接的数据库
-	Types        = "TYPE"     // 库类型,可选mysql mariadb
-	UserId       = "USERID"   // 连接用户
-	PassWord     = "PASSWORD" // 连接密码
+	SourceDBType = "SOURCEDB"  // 参数类型
+	Port         = "PORT"      // 端口关键字
+	DataBase     = "DATABASE"  // 默认连接的数据库
+	Types        = "TYPE"      // 库类型,可选mysql mariadb
+	UserId       = "USERID"    // 连接用户
+	PassWord     = "PASSWORD"  // 连接密码
+	ServerId     = "SERVERID"  // mysql server id
+	Retry        = "RETRY"     // 连接重试最大
+	Character    = "CHARACTER" // 客户端字符集关键字
 
-	DefaultPort     = "3306"  // 默认端口
-	DefaultDataBase = "test"  // 默认连接数据库
-	DefaultTypes    = "mysql" // 默认库类型
-	DefaultUserId   = "root"  // 默认用户名
+	DefaultPort            uint16 = 3306    // 默认端口
+	DefaultDataBase               = "test"  // 默认连接数据库
+	DefaultTypes                  = "mysql" // 默认库类型
+	DefaultUserId                 = "root"  // 默认用户名
+	DefaultMaxRetryConnect int    = 3
+	DefaultClientCharacter        = "UTF8"
 )
 
 // traildir 参数
@@ -79,11 +84,11 @@ var (
 	TableExcludeRegular = "(^)(?i:(" + TableExcludeType + "))(\\s+)((\\S+)(\\.)(\\S+\\s*)(;))($)"
 )
 
-
 //根据执行文件路径获取程序的HOME路径
-func GetHomeDirectory() (dir *string, err error) {
+func GetHomeDirectory() (s *string, err error) {
 	file, _ := exec.LookPath(os.Args[0])
 	ExecFilePath, _ := filepath.Abs(file)
+	var dir string
 
 	os := runtime.GOOS
 	switch os {
@@ -93,9 +98,9 @@ func GetHomeDirectory() (dir *string, err error) {
 		for i, v := range HomeDirectory {
 			if v != "" {
 				if i > 0 {
-					*dir += `\` + v
+					dir += `\` + v
 				} else {
-					*dir += v
+					dir += v
 				}
 			}
 		}
@@ -104,17 +109,17 @@ func GetHomeDirectory() (dir *string, err error) {
 		HomeDirectory := execfileslice[:len(execfileslice)-2]
 		for _, v := range HomeDirectory {
 			if v != "" {
-				*dir += `/` + v
+				dir += `/` + v
 			}
 		}
 	default:
 		return nil, errors.Errorf("Unsupported operating system type: %s", os)
 	}
 
-	if *dir == "" {
+	if dir == "" {
 		return nil, errors.Errorf("Get program home directory failed: %s", dir)
 	}
-	return dir, nil
+	return &dir, nil
 }
 
 func HasPrefixIgnoreCase(s, prefix string) bool {

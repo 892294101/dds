@@ -1,4 +1,4 @@
-package mysql
+package oramysql
 
 type DataEventRows struct {
 }

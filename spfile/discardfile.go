@@ -8,17 +8,17 @@ import (
 )
 
 type DiscardFile struct {
-	SupportParams map[string]map[string]string
-	ParamPrefix   *string
+	supportParams map[string]map[string]string
+	paramPrefix   *string
 	Dir           *string
 }
 
-func (d *DiscardFile) Put() string {
-	return fmt.Sprintf("%s %s", *d.ParamPrefix, *d.Dir)
+func (d *DiscardFile) put() string {
+	return fmt.Sprintf("%s %s", *d.paramPrefix, *d.Dir)
 }
 
-func (d *DiscardFile) Init() {
-	d.SupportParams = map[string]map[string]string{
+func (d *DiscardFile) init() {
+	d.supportParams = map[string]map[string]string{
 		utils.MySQL: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
@@ -30,26 +30,26 @@ func (d *DiscardFile) Init() {
 	}
 }
 
-func (d *DiscardFile) InitDefault() error {
+func (d *DiscardFile) initDefault() error {
 	return nil
 }
 
-func (d *DiscardFile) IsType(raw *string, dbType *string, processType *string) error {
-	d.Init()
-	_, ok := d.SupportParams[*dbType][*processType]
+func (d *DiscardFile) isType(raw *string, dbType *string, processType *string) error {
+	d.init()
+	_, ok := d.supportParams[*dbType][*processType]
 	if ok {
 		return nil
 	}
 	return errors.Errorf("The %s %s process does not support this parameter: %s", *dbType, *processType, *raw)
 }
 
-func (d *DiscardFile) Parse(raw *string) error {
+func (d *DiscardFile) parse(raw *string) error {
 	discards := utils.TrimKeySpace(strings.Split(*raw, " "))
 	discardLength := len(discards) - 1
 	for i := 0; i < len(discards); i++ {
 		switch {
 		case strings.EqualFold(discards[i], utils.DiscardFileType):
-			d.ParamPrefix = &discards[i]
+			d.paramPrefix = &discards[i]
 			if i+1 > discardLength {
 				return errors.Errorf("%s value must be specified", discards[i])
 			}
@@ -70,7 +70,7 @@ func (d *DiscardFile) Parse(raw *string) error {
 	return nil
 }
 
-func (d *DiscardFile) Add(raw *string) error {
+func (d *DiscardFile) add(raw *string) error {
 
 	return nil
 }
@@ -80,19 +80,23 @@ type DiscardFileSet struct {
 
 var DiscardFileBus DiscardFileSet
 
-func (t *DiscardFileSet) Init() {
-	t.discard = new(DiscardFile)
+func (d *DiscardFileSet) Init() {
+	d.discard = new(DiscardFile)
 }
 
-func (t *DiscardFileSet) Add(raw *string) error {
+func (d *DiscardFileSet) Add(raw *string) error {
 	return nil
 }
 
-func (t *DiscardFileSet) ListParamText() string {
-	return t.discard.Put()
+func (d *DiscardFileSet) ListParamText() string {
+	return d.discard.put()
 }
 
-func (t *DiscardFileSet) Registry() map[string]Parameter {
-	t.Init()
-	return map[string]Parameter{utils.DiscardFileType: t.discard}
+func (d *DiscardFileSet) GetParam() interface{} {
+	return d.discard
+}
+
+func (d *DiscardFileSet) Registry() map[string]Parameter {
+	d.Init()
+	return map[string]Parameter{utils.DiscardFileType: d.discard}
 }

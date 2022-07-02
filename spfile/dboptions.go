@@ -8,21 +8,21 @@ import (
 )
 
 type Options struct {
-	Opts map[string]bool
+	opts map[string]bool
 }
 
-func (o *Options) SetOption(s *string) error {
+func (o *Options) setOption(s *string) error {
 	ops := strings.ToUpper(*s)
 	switch ops {
 	case utils.GetReplicates:
-		o.Opts[utils.GetReplicates] = true
+		o.opts[utils.GetReplicates] = true
 	case utils.IgnoreReplicates:
-		o.Opts[utils.GetReplicates] = false
+		o.opts[utils.GetReplicates] = false
 	default:
 		ops := strings.ToUpper(*s)
-		_, ok := o.Opts[ops]
+		_, ok := o.opts[ops]
 		if ok {
-			o.Opts[ops] = true
+			o.opts[ops] = true
 		} else {
 			return errors.Errorf("unknown parameter: %s", *s)
 		}
@@ -30,28 +30,48 @@ func (o *Options) SetOption(s *string) error {
 	return nil
 }
 
-func (o *Options) GetOption(s *string) {
+func (o *Options) GetReplicates() (*bool, error) {
+	v, ok := o.opts[utils.GetReplicates]
+	if ok {
+		return &v, nil
+	}
+	return nil, errors.Errorf("%s Parameter value acquisition failed", utils.GetReplicates)
+}
 
+func (o *Options) GetSuppressionTrigger() (*bool, error) {
+	v, ok := o.opts[utils.SuppressionTrigger]
+	if ok {
+		return &v, nil
+	}
+	return nil, errors.Errorf("%s Parameter value acquisition failed", utils.SuppressionTrigger)
+}
+
+func (o *Options) GetIgnoreForeignkey() (*bool, error) {
+	v, ok := o.opts[utils.IgnoreForeignkey]
+	if ok {
+		return &v, nil
+	}
+	return nil, errors.Errorf("%s Parameter value acquisition failed", utils.IgnoreForeignkey)
 }
 
 type DBOptions struct {
-	SupportParams map[string]map[string]string
-	ParamPrefix   *string
+	supportParams map[string]map[string]string
+	paramPrefix   *string
 	OptionsSet    *Options
 }
 
-func (d *DBOptions) Put() string {
+func (d *DBOptions) put() string {
 	var msg string
-	msg += fmt.Sprintf("%s", *d.ParamPrefix)
-	for s, b := range d.OptionsSet.Opts {
+	msg += fmt.Sprintf("%s", *d.paramPrefix)
+	for s, b := range d.OptionsSet.opts {
 		msg += fmt.Sprintf(" %s %v", s, b)
 	}
 	return msg
 }
 
 // 当传入参数时, 初始化特定参数的值
-func (d *DBOptions) Init() {
-	d.SupportParams = map[string]map[string]string{
+func (d *DBOptions) init() {
+	d.supportParams = map[string]map[string]string{
 		utils.MySQL: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
@@ -62,7 +82,7 @@ func (d *DBOptions) Init() {
 		},
 	}
 	d.OptionsSet = &Options{
-		Opts: map[string]bool{
+		opts: map[string]bool{
 			utils.SuppressionTrigger: false,
 			utils.IgnoreForeignkey:   false,
 			utils.GetReplicates:      false,
@@ -71,32 +91,32 @@ func (d *DBOptions) Init() {
 }
 
 // 当没有参数时, 初始化此参数默认值
-func (d *DBOptions) InitDefault() error {
-	d.Init()
-	d.ParamPrefix = &utils.DBOptionsType
+func (d *DBOptions) initDefault() error {
+	d.init()
+	d.paramPrefix = &utils.DBOptionsType
 	return nil
 }
 
-func (d *DBOptions) IsType(raw *string, dbType *string, processType *string) error {
-	d.Init()
-	_, ok := d.SupportParams[*dbType][*processType]
+func (d *DBOptions) isType(raw *string, dbType *string, processType *string) error {
+	d.init()
+	_, ok := d.supportParams[*dbType][*processType]
 	if ok {
 		return nil
 	}
 	return errors.Errorf("The %s %s process does not support this parameter: %s", *dbType, *processType, *raw)
 }
 
-func (d *DBOptions) Parse(raw *string) error {
+func (d *DBOptions) parse(raw *string) error {
 	options := utils.TrimKeySpace(strings.Split(*raw, " "))
 	optionsLength := len(options) - 1
 	for i := 0; i < len(options); i++ {
 		if strings.EqualFold(options[i], utils.DBOptionsType) {
-			d.ParamPrefix = &options[i]
+			d.paramPrefix = &options[i]
 			if i+1 > optionsLength {
 				return errors.Errorf("%s value must be specified", options[i])
 			}
 		} else {
-			err := d.OptionsSet.SetOption(&options[i])
+			err := d.OptionsSet.setOption(&options[i])
 			if err != nil {
 				return err
 			}
@@ -107,7 +127,7 @@ func (d *DBOptions) Parse(raw *string) error {
 	return nil
 }
 
-func (d *DBOptions) Add(raw *string) error {
+func (d *DBOptions) add(raw *string) error {
 	return nil
 }
 
@@ -126,7 +146,11 @@ func (d *DBOptionsSet) Add(raw *string) error {
 }
 
 func (d *DBOptionsSet) ListParamText() string {
-	return d.dbOps.Put()
+	return d.dbOps.put()
+}
+
+func (d *DBOptionsSet) GetParam() interface{} {
+	return d.dbOps
 }
 
 func (d *DBOptionsSet) Registry() map[string]Parameter {

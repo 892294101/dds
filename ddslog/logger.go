@@ -12,9 +12,9 @@ import (
 )
 
 //自义定日志结构
-type MyFormatter struct{}
+type myFormatter struct{}
 
-func (s *MyFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+func (s *myFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	timestamp := time.Now().Local().Format("2006-01-02 15:04:05.00")
 	var reason interface{}
 	if v, ok := entry.Data["err"]; ok {
@@ -40,22 +40,21 @@ func InitDDSlog() (*logrus.Logger, error) {
 	if err != nil {
 		return nil, err
 	}
-	log := filepath.Join(*dir, "logs", "extract.log")
+
+	log := filepath.Join(*dir, "logs", "ddscli.log")
 	logfile, err := os.OpenFile(log, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
-	//writers := []io.Writer{logfile, os.Stdout}
-	writers := []io.Writer{logfile}
+	writers := []io.Writer{logfile, os.Stdout}
+	//writers := []io.Writer{logfile}
 	fileAndStdoutWriter := io.MultiWriter(writers...)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Log file open failed: %s", err)
 		os.Exit(1)
 	} else {
-		logrus.SetOutput(fileAndStdoutWriter)
+		ddslog.SetOutput(fileAndStdoutWriter)
 	}
-
-	ddslog.SetLevel(logrus.DebugLevel)
+	ddslog.SetLevel(logrus.InfoLevel)
 	ddslog.SetReportCaller(true)
-	ddslog.SetFormatter(new(MyFormatter))
+	ddslog.SetFormatter(new(myFormatter))
 	ddslog.Infof("Initialize log file: %s", log)
-
 	return ddslog, nil
 }

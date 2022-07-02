@@ -7,34 +7,34 @@ import (
 	"regexp"
 )
 
-type OwnerTable struct {
-	OwnerValue string
-	TableValue string
+type ownerTable struct {
+	ownerValue string
+	tableValue string
 }
 
 type ETL struct {
-	AddColumn    string
-	DeleteColumn string
-	UpdateColumn string
-	MapColumn    string
+	addColumn    string
+	deleteColumn string
+	updateColumn string
+	mapColumn    string
 }
 
 type TableSets struct {
-	SupportParams  map[string]map[string]string
-	ParamPrefix    *string
-	TableList      map[OwnerTable]*ETL
-	TableListIndex []OwnerTable
+	supportParams  map[string]map[string]string
+	paramPrefix    *string
+	TableList      map[ownerTable]*ETL
+	tableListIndex []ownerTable
 }
 
-func (t *TableSets) Put() string {
+func (t *TableSets) put() string {
 	var msg string
-	for i, index := range t.TableListIndex {
+	for i, index := range t.tableListIndex {
 		_, ok := t.TableList[index]
 		if ok {
 			if i > 0 {
 				msg += fmt.Sprintf("\n")
 			}
-			msg += fmt.Sprintf("%s %s.%s", *t.ParamPrefix, index.OwnerValue, index.TableValue)
+			msg += fmt.Sprintf("%s %s.%s", *t.paramPrefix, index.ownerValue, index.tableValue)
 		}
 
 	}
@@ -42,8 +42,8 @@ func (t *TableSets) Put() string {
 }
 
 // 当传入参数时, 初始化特定参数的值
-func (t *TableSets) Init() {
-	t.SupportParams = map[string]map[string]string{
+func (t *TableSets) init() {
+	t.supportParams = map[string]map[string]string{
 		utils.MySQL: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
@@ -53,20 +53,20 @@ func (t *TableSets) Init() {
 			utils.Replicat: utils.Replicat,
 		},
 	}
-	t.TableList = make(map[OwnerTable]*ETL)
+	t.TableList = make(map[ownerTable]*ETL)
 
 }
 
 // 当没有参数时, 初始化此参数默认值
-func (t *TableSets) InitDefault() error {
-	t.Init()
-	t.ParamPrefix = &utils.DBOptionsType
+func (t *TableSets) initDefault() error {
+	t.init()
+	t.paramPrefix = &utils.DBOptionsType
 	return nil
 }
 
-func (t *TableSets) IsType(raw *string, dbType *string, processType *string) error {
-	t.Init()
-	_, ok := t.SupportParams[*dbType][*processType]
+func (t *TableSets) isType(raw *string, dbType *string, processType *string) error {
+	t.init()
+	_, ok := t.supportParams[*dbType][*processType]
 	if ok {
 		return nil
 	}
@@ -74,7 +74,7 @@ func (t *TableSets) IsType(raw *string, dbType *string, processType *string) err
 }
 
 // 新参数进入后, 第一次需要进入解析动作
-func (t *TableSets) Parse(raw *string) error {
+func (t *TableSets) parse(raw *string) error {
 	reg, err := regexp.Compile(utils.TableRegular)
 	if reg == nil || err != nil {
 		return errors.Errorf("%s parameter Regular compilation error: %s", utils.TableType, *raw)
@@ -86,15 +86,15 @@ func (t *TableSets) Parse(raw *string) error {
 	}
 	result = utils.TrimKeySpace(result)
 
-	if t.ParamPrefix == nil {
-		t.ParamPrefix = &result[1]
+	if t.paramPrefix == nil {
+		t.paramPrefix = &result[1]
 	}
 
-	ownerTable := OwnerTable{result[3], result[5]}
+	ownerTable := ownerTable{result[3], result[5]}
 	_, ok := t.TableList[ownerTable]
 	if !ok {
 		t.TableList[ownerTable] = nil
-		t.TableListIndex = append(t.TableListIndex, ownerTable)
+		t.tableListIndex = append(t.tableListIndex, ownerTable)
 	}
 
 	return nil
@@ -106,14 +106,14 @@ func (t *TableSets) Parse(raw *string) error {
 		tab := utils.TrimKeySpace(strings.Split(rawText, " "))
 		for i := 0; i < len(tab); i++ {
 			if strings.EqualFold(tab[i], utils.TableType) {
-				t.ParamPrefix = &tab[i]
+				t.paramPrefix = &tab[i]
 			} else {
 				tabVal := strings.Split(tab[i], ".")
-				ownerTable := OwnerTable{tabVal[0], tabVal[1]}
+				ownerTable := ownerTable{tabVal[0], tabVal[1]}
 				_, ok := t.TableList[ownerTable]
 				if !ok {
 					t.TableList[ownerTable] = nil
-					t.TableListIndex = append(t.TableListIndex, ownerTable)
+					t.tableListIndex = append(t.tableListIndex, ownerTable)
 				}
 
 			}
@@ -129,7 +129,7 @@ func (t *TableSets) Parse(raw *string) error {
 }
 
 // 当出现第二次参数进入, 需要进入add动作
-func (t *TableSets) Add(raw *string) error {
+func (t *TableSets) add(raw *string) error {
 	reg, err := regexp.Compile(utils.TableRegular)
 	if reg == nil || err != nil {
 		return errors.Errorf("%s parameter Regular compilation error: %s", utils.TableType, *raw)
@@ -141,11 +141,11 @@ func (t *TableSets) Add(raw *string) error {
 	}
 	result = utils.TrimKeySpace(result)
 
-	ownerTable := OwnerTable{result[3], result[5]}
+	ownerTable := ownerTable{result[3], result[5]}
 	_, ok := t.TableList[ownerTable]
 	if !ok {
 		t.TableList[ownerTable] = nil
-		t.TableListIndex = append(t.TableListIndex, ownerTable)
+		t.tableListIndex = append(t.tableListIndex, ownerTable)
 	}
 
 	/*matched, _ := regexp.MatchString(utils.TableRegular, *raw)
@@ -156,14 +156,14 @@ func (t *TableSets) Add(raw *string) error {
 		tab := utils.TrimKeySpace(strings.Split(rawText, " "))
 		for i := 0; i < len(tab); i++ {
 			if strings.EqualFold(tab[i], utils.TableType) {
-				t.ParamPrefix = &tab[i]
+				t.paramPrefix = &tab[i]
 			} else {
 				tabVal := strings.Split(tab[i], ".")
-				ownerTable := OwnerTable{tabVal[0], tabVal[1]}
+				ownerTable := ownerTable{tabVal[0], tabVal[1]}
 				_, ok := t.TableList[ownerTable]
 				if !ok {
 					t.TableList[ownerTable] = nil
-					t.TableListIndex = append(t.TableListIndex, ownerTable)
+					t.tableListIndex = append(t.tableListIndex, ownerTable)
 				}
 
 			}
@@ -189,11 +189,15 @@ func (t *TableSet) Init() {
 }
 
 func (t *TableSet) Add(raw *string) error {
-	return t.table.Add(raw)
+	return t.table.add(raw)
 }
 
 func (t *TableSet) ListParamText() string {
-	return t.table.Put()
+	return t.table.put()
+}
+
+func (t *TableSet) GetParam() interface{} {
+	return t.table
 }
 
 func (t *TableSet) Registry() map[string]Parameter {

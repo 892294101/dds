@@ -7,33 +7,32 @@ import (
 	"regexp"
 )
 
-type ExcludeOwnerTable struct {
-	OwnerValue string
-	TableValue string
+type excludeOwnerTable struct {
+	ownerValue string
+	tableValue string
 }
 
 type ExcludeTableSets struct {
-	SupportParams  map[string]map[string]string
-	ParamPrefix    *string
-	TableList      map[ExcludeOwnerTable]*string
-	TableListIndex []ExcludeOwnerTable
+	supportParams  map[string]map[string]string
+	paramPrefix    *string
+	TableList      map[excludeOwnerTable]*string
+	tableListIndex []excludeOwnerTable
 }
 
-func (e *ExcludeTableSets) Put() string {
+func (e *ExcludeTableSets) put() string {
 	var msg string
-	for _, index := range e.TableListIndex {
+	for _, index := range e.tableListIndex {
 		_, ok := e.TableList[index]
 		if ok {
-			msg += fmt.Sprintf("%s %s.%s\n", *e.ParamPrefix, index.OwnerValue, index.TableValue)
+			msg += fmt.Sprintf("%s %s.%s\n", *e.paramPrefix, index.ownerValue, index.tableValue)
 		}
-
 	}
 	return msg
 }
 
 // 当传入参数时, 初始化特定参数的值
-func (e *ExcludeTableSets) Init() {
-	e.SupportParams = map[string]map[string]string{
+func (e *ExcludeTableSets) init() {
+	e.supportParams = map[string]map[string]string{
 		utils.MySQL: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
@@ -43,20 +42,20 @@ func (e *ExcludeTableSets) Init() {
 			utils.Replicat: utils.Replicat,
 		},
 	}
-	e.TableList = make(map[ExcludeOwnerTable]*string)
+	e.TableList = make(map[excludeOwnerTable]*string)
 
 }
 
 // 当没有参数时, 初始化此参数默认值
-func (e *ExcludeTableSets) InitDefault() error {
-	e.Init()
-	e.ParamPrefix = &utils.DBOptionsType
+func (e *ExcludeTableSets) initDefault() error {
+	e.init()
+	e.paramPrefix = &utils.DBOptionsType
 	return nil
 }
 
-func (e *ExcludeTableSets) IsType(raw *string, dbType *string, processType *string) error {
-	e.Init()
-	_, ok := e.SupportParams[*dbType][*processType]
+func (e *ExcludeTableSets) isType(raw *string, dbType *string, processType *string) error {
+	e.init()
+	_, ok := e.supportParams[*dbType][*processType]
 	if ok {
 		return nil
 	}
@@ -64,7 +63,7 @@ func (e *ExcludeTableSets) IsType(raw *string, dbType *string, processType *stri
 }
 
 // 新参数进入后, 第一次需要进入解析动作
-func (e *ExcludeTableSets) Parse(raw *string) error {
+func (e *ExcludeTableSets) parse(raw *string) error {
 	reg, err := regexp.Compile(utils.TableExcludeRegular)
 	if reg == nil || err != nil {
 		return errors.Errorf("%s parameter Regular compilation error: %s", utils.TableExcludeType, *raw)
@@ -76,21 +75,21 @@ func (e *ExcludeTableSets) Parse(raw *string) error {
 	}
 	result = utils.TrimKeySpace(result)
 
-	if e.ParamPrefix == nil {
-		e.ParamPrefix = &result[1]
+	if e.paramPrefix == nil {
+		e.paramPrefix = &result[1]
 	}
 
-	ownerTable := ExcludeOwnerTable{result[3], result[5]}
+	ownerTable := excludeOwnerTable{result[3], result[5]}
 	_, ok := e.TableList[ownerTable]
 	if !ok {
 		e.TableList[ownerTable] = nil
-		e.TableListIndex = append(e.TableListIndex, ownerTable)
+		e.tableListIndex = append(e.tableListIndex, ownerTable)
 	}
 	return nil
 }
 
 // 当出现第二次参数进入, 需要进入add动作
-func (e *ExcludeTableSets) Add(raw *string) error {
+func (e *ExcludeTableSets) add(raw *string) error {
 	reg, err := regexp.Compile(utils.TableExcludeRegular)
 	if reg == nil || err != nil {
 		return errors.Errorf("%s parameter Regular compilation error: %s", utils.TableExcludeType, *raw)
@@ -102,11 +101,11 @@ func (e *ExcludeTableSets) Add(raw *string) error {
 	}
 	result = utils.TrimKeySpace(result)
 
-	ownerTable := ExcludeOwnerTable{result[3], result[5]}
+	ownerTable := excludeOwnerTable{result[3], result[5]}
 	_, ok := e.TableList[ownerTable]
 	if !ok {
 		e.TableList[ownerTable] = nil
-		e.TableListIndex = append(e.TableListIndex, ownerTable)
+		e.tableListIndex = append(e.tableListIndex, ownerTable)
 	}
 
 	return nil
@@ -123,11 +122,15 @@ func (e *ExcludeTableSet) Init() {
 }
 
 func (e *ExcludeTableSet) Add(raw *string) error {
-	return e.table.Add(raw)
+	return e.table.add(raw)
 }
 
 func (e *ExcludeTableSet) ListParamText() string {
-	return e.table.Put()
+	return e.table.put()
+}
+
+func (e *ExcludeTableSet) GetParam() interface{} {
+	return e.table
 }
 
 func (e *ExcludeTableSet) Registry() map[string]Parameter {
