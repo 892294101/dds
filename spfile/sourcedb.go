@@ -3,7 +3,7 @@ package spfile
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"myGithubLib/dds/extract/mysql/utils"
+	"myGithubLib/dds/utils"
 	"regexp"
 	"strconv"
 	"strings"
@@ -44,6 +44,11 @@ type ClientCharacterSet struct {
 	value *string
 }
 
+type ClientCollation struct {
+	key   *string
+	value *string
+}
+
 type dbInfo struct {
 	address            *string             // 数据库地址
 	port               *PortModel          // 数据库端口
@@ -53,6 +58,7 @@ type dbInfo struct {
 	serverId           *ServerIdModel      // mysql server id
 	retryMaxConnNumber *RetryMaxConnect    // 连接重连最大次数
 	clientCharacter    *ClientCharacterSet // 客户端字符集
+	clientCollation    *ClientCollation    // 客户端字符集
 }
 
 func (d *dbInfo) GetAddress() *string         { return d.address }
@@ -63,6 +69,7 @@ func (d *dbInfo) GetPassWord() *string        { return d.passWord.value }
 func (d *dbInfo) GetServerID() *uint32        { return d.serverId.value }
 func (d *dbInfo) GetRetryConnect() *int       { return d.retryMaxConnNumber.value }
 func (d *dbInfo) GetClientCharacter() *string { return d.clientCharacter.value }
+func (d *dbInfo) GetClientCollation() *string { return d.clientCollation.value }
 
 type SourceDB struct {
 	supportParams map[string]map[string]string // 参数支持吃数据库和进程
@@ -248,6 +255,19 @@ func (s *SourceDB) parse(raw *string) error {
 			}
 			s.DBInfo.clientCharacter = &ClientCharacterSet{key: &sdb[i], value: NextVal}
 			i += 1
+		case strings.EqualFold(sdb[i], utils.Collation):
+			if i+1 > sdbLength {
+				return errors.Errorf("%s value must be specified", utils.Collation)
+			}
+			NextVal := &sdb[i+1]
+			if utils.KeyCheck(NextVal) {
+				return errors.Errorf("keywords cannot be used: %s", *NextVal)
+			}
+			if s.DBInfo.clientCollation != nil {
+				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
+			}
+			s.DBInfo.clientCollation = &ClientCollation{key: &sdb[i], value: NextVal}
+			i += 1
 		default:
 			return errors.Errorf("unknown keyword: %s", sdb[i])
 		}
@@ -274,6 +294,11 @@ func (s *SourceDB) parse(raw *string) error {
 	if s.DBInfo.clientCharacter == nil {
 		s.DBInfo.clientCharacter = &ClientCharacterSet{key: &utils.Character, value: &utils.DefaultClientCharacter}
 	}
+
+	if s.DBInfo.clientCollation == nil {
+		s.DBInfo.clientCollation = &ClientCollation{key: &utils.Collation, value: &utils.DefaultClientCharacter}
+	}
+
 
 	if s.DBInfo.passWord == nil {
 		return errors.Errorf("%s %s must be specified", utils.SourceDBType, utils.PassWord)

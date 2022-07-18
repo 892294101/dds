@@ -1,6 +1,6 @@
 package spfile
 
-import "myGithubLib/dds/extract/mysql/utils"
+import "myGithubLib/dds/utils"
 
 const (
 	IpV4Reg  = "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$"

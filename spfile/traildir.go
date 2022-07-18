@@ -3,7 +3,7 @@ package spfile
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"myGithubLib/dds/extract/mysql/utils"
+	"myGithubLib/dds/utils"
 	"strconv"
 	"strings"
 )

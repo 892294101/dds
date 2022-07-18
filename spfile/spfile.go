@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"myGithubLib/dds/extract/mysql/utils"
+	"myGithubLib/dds/utils"
 	"os"
 	"strings"
 )

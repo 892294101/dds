@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 	cache "github.com/emirpasic/gods/queues/linkedlistqueue"
-	"github.com/go-mysql-org/go-mysql/canal"
 	"github.com/go-mysql-org/go-mysql/mysql"
 	"github.com/go-mysql-org/go-mysql/replication"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"myGithubLib/dds/extract/mysql/spfile"
-	"myGithubLib/dds/extract/mysql/utils"
+	"myGithubLib/dds/ddscanal"
+	"myGithubLib/dds/spfile"
+	"myGithubLib/dds/utils"
+	"os"
 	"time"
 )
 
@@ -167,12 +168,16 @@ func (e *ExtractEvent) StartSyncToStream(file int, pos uint32) error {
 				e.log.Fatalf("%s", err)
 			}
 		}
-		/*if ev != nil {
+		if ev != nil {
 			ev.Dump(os.Stdout)
-		}*/
+		}
+
 		switch v := ev.Event.(type) {
 		case *replication.QueryEvent:
-			fmt.Println(string(v.Query) )
+			fmt.Println(string(v.Query))
+		case *replication.TableMapEvent:
+
+			
 		}
 
 	}
@@ -183,7 +188,7 @@ func NewMySQLSync() *ExtractEvent {
 	return new(ExtractEvent)
 }
 
-func NewCanalConfig() *canal.Config {
+func NewCanalConfig() *ddscanal.Config {
 
 	return nil
 }

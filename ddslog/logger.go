@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io"
-	"myGithubLib/dds/extract/mysql/utils"
+	"myGithubLib/dds/utils"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,6 +36,7 @@ func (s *myFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 //定义为同事输出日志内容到标准输出和和日志文件
 func InitDDSlog() (*logrus.Logger, error) {
 	ddslog := logrus.New()
+
 	dir, err := utils.GetHomeDirectory()
 	if err != nil {
 		return nil, err

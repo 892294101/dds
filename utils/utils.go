@@ -35,6 +35,7 @@ var (
 	ServerId     = "SERVERID"  // mysql server id
 	Retry        = "RETRY"     // 连接重试最大
 	Character    = "CHARACTER" // 客户端字符集关键字
+	Collation    = "COLLATION"
 
 	DefaultPort            uint16 = 3306    // 默认端口
 	DefaultDataBase               = "test"  // 默认连接数据库
@@ -42,6 +43,7 @@ var (
 	DefaultUserId                 = "root"  // 默认用户名
 	DefaultMaxRetryConnect int    = 3
 	DefaultClientCharacter        = "UTF8"
+	DefaultClientCollation        = "UTF8_GENERAL_CI"
 )
 
 // traildir 参数
