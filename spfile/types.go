@@ -1,6 +1,6 @@
 package spfile
 
-import "myGithubLib/dds/utils"
+import "github.com/892294101/dds/utils"
 
 const (
 	IpV4Reg  = "^((0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(0|[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-5])$"

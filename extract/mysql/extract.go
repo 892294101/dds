@@ -8,9 +8,9 @@ import (
 	"github.com/go-mysql-org/go-mysql/replication"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"myGithubLib/dds/ddscanal"
-	"myGithubLib/dds/spfile"
-	"myGithubLib/dds/utils"
+	"github.com/892294101/dds/ddscanal"
+	"github.com/892294101/dds/spfile"
+	"github.com/892294101/dds/utils"
 	"os"
 	"time"
 )

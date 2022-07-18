@@ -1,4 +1,4 @@
-module myGithubLib/dds
+module github.com/892294101/dds
 
 go 1.15
 

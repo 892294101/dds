@@ -3,7 +3,7 @@ package spfile
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"myGithubLib/dds/utils"
+	"github.com/892294101/dds/utils"
 	"regexp"
 	"strconv"
 	"strings"

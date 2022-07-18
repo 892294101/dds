@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/892294101/dds/ddscanal"
+	"github.com/892294101/dds/ddslog"
+	oramysql "github.com/892294101/dds/extract/mysql"
+	"github.com/892294101/dds/spfile"
 	"github.com/892294101/parser/ast"
 	"github.com/go-mysql-org/go-mysql/mysql"
 	"github.com/go-mysql-org/go-mysql/replication"
-	"myGithubLib/dds/ddscanal"
-	"myGithubLib/dds/ddslog"
-	oramysql "myGithubLib/dds/extract/mysql"
-	"myGithubLib/dds/spfile"
 	"os"
 )
 
@@ -233,8 +233,8 @@ func main() {
 	ch.RunFrom(fn)
 	// Start canal
 	ch.Run()
-*/
-	 pfile, err := spfile.LoadSpfile("D:\\workspace\\gowork\\src\\myGithubLib\\dds\\build\\param\\httk_0001.desc",
+	*/
+	pfile, err := spfile.LoadSpfile("D:\\workspace\\gowork\\src\\github.com/892294101\\dds\\build\\param\\httk_0001.desc",
 		spfile.UTF8,
 		log,
 		spfile.GetMySQLName(),
