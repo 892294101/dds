@@ -19866,3 +19866,9 @@ ADD COLUMN `b` polygon NULL AFTER `d`" , This event will be skipped by exception
 2022-07-16 00:43:51.06 I retrySync 619 [M] begin to re-sync from (mysql-bin.000002, 150)
 2022-07-16 00:43:51.06 E onStream 712 [M] retry sync err: dial tcp 10.130.41.234:3306: connectex: A socket operation was attempted to an unreachable host., exceeded max retries (3)
 2022-07-16 00:43:51.06 F StartSyncToStream 168 [M] dial tcp 10.130.41.234:3306: connectex: A socket operation was attempted to an unreachable host.
+2022-07-18 16:23:58.75 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 16:23:58.75 I NewBinlogSyncer 155 [M] create BinlogSyncer with config {1002 mysql 10.130.41.234 3306 admin   UTF8 false false <nil> false UTC false 0 0s 0s 3 false false 0 <nil> 0xc0001ff260}
+2022-07-18 16:23:58.75 I StartSync 391 [M] begin to sync binlog from position (mysql-bin.000001, 150)
+2022-07-18 16:23:58.81 I parseEvent 807 [M] rotate to (mysql-bin.000001, 150)
+2022-07-18 16:23:58.81 I parseEvent 807 [M] rotate to (mysql-bin.000002, 4)
+2022-07-18 16:23:58.81 I parseEvent 807 [M] rotate to (mysql-bin.000002, 4)

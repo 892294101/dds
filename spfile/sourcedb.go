@@ -2,8 +2,8 @@ package spfile
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/892294101/dds/utils"
+	"github.com/pkg/errors"
 	"regexp"
 	"strconv"
 	"strings"
@@ -298,7 +298,6 @@ func (s *SourceDB) parse(raw *string) error {
 	if s.DBInfo.clientCollation == nil {
 		s.DBInfo.clientCollation = &ClientCollation{key: &utils.Collation, value: &utils.DefaultClientCharacter}
 	}
-
 
 	if s.DBInfo.passWord == nil {
 		return errors.Errorf("%s %s must be specified", utils.SourceDBType, utils.PassWord)

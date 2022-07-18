@@ -2,18 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/892294101/dds/ddscanal"
 	"github.com/892294101/dds/ddslog"
 	oramysql "github.com/892294101/dds/extract/mysql"
 	"github.com/892294101/dds/spfile"
+	"github.com/892294101/go-mysql/canal"
+	"github.com/892294101/go-mysql/mysql"
+	"github.com/892294101/go-mysql/replication"
 	"github.com/892294101/parser/ast"
-	"github.com/go-mysql-org/go-mysql/mysql"
-	"github.com/go-mysql-org/go-mysql/replication"
 	"os"
 )
 
 type MyEventHandler struct {
-	ddscanal.DummyEventHandler
+	canal.DummyEventHandler
 }
 
 func (h *MyEventHandler) OnTableDDL(nextPos mysql.Position, queryEvent *replication.QueryEvent, tabDDL interface{}) error {
@@ -162,7 +162,7 @@ func (h *MyEventHandler) OnPosSynced(m mysql.Position, g mysql.GTIDSet, b bool) 
 	return nil
 }
 
-func (h *MyEventHandler) OnRow(e *ddscanal.RowsEvent) error {
+func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 	fmt.Printf("Header: %d %v %v %v %v\n", e.Header.Timestamp, e.Header.EventSize, e.Header.LogPos, e.Header.Flags, e.Header.ServerID)
 	fmt.Printf("OnRow: Table.Schema: %s Table.Name: %s\n", e.Table.Schema, e.Table.Name)
 	fmt.Printf("OnRow: Table.PKColumns: %v\n", e.Table.PKColumns)

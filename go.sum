@@ -1,4 +1,15 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+github.com/892294101/dds v1.0.9 h1:wT0U8m8VLF+CX6BeLIxwg0oL8eMZZAvXg7C49FoGCw8=
+github.com/892294101/dds/parser v0.0.0-20220704065302-e50b9430fc65 h1:rSKMIYmHn627tsOL5DxzIrif47C3roJNMCdnxd6D4UM=
+github.com/892294101/dds/parser v0.0.0-20220704065302-e50b9430fc65/go.mod h1:ElJiub4lRy6UZDb+0JHDkGEdr6aOli+ykhyej7VCLoI=
+github.com/892294101/dds/parser v0.0.0-20220705035301-a4fd5cd4d9b3 h1:SV9u+OtPP7nJrTU8DvVhqiP6r/f0HoK2Ag9Ny2y56ws=
+github.com/892294101/dds/parser v0.0.0-20220705035301-a4fd5cd4d9b3/go.mod h1:ElJiub4lRy6UZDb+0JHDkGEdr6aOli+ykhyej7VCLoI=
+github.com/892294101/dds/parser v0.0.0-20220705054302-d8dbab23ccc0 h1:aqQhYzcf81OWFaHsPS2r3oE0pIe3+uoW6UaaK5obU0Q=
+github.com/892294101/dds/parser v0.0.0-20220705054302-d8dbab23ccc0/go.mod h1:ElJiub4lRy6UZDb+0JHDkGEdr6aOli+ykhyej7VCLoI=
+github.com/892294101/go-mysql v0.0.0-20220718141803-ca71079297ba h1:azIaoiZ3r7j2TWseCKxkn7wb4vojDhV3RhfvoVuxNAY=
+github.com/892294101/go-mysql v0.0.0-20220718141803-ca71079297ba/go.mod h1:NZMlUg9U8efZazxv8eHB8EYeie/OsrAXQRiHQtE1JHQ=
+github.com/892294101/go-mysql v1.6.0 h1:19B5fojzZcri/1wj9G/1+ws8RJ3N6rJs2X5c/+kBLuQ=
+github.com/892294101/go-mysql v1.6.0/go.mod h1:GX0clmylJLdZEYAojPCDTCvwZxbTBrke93dV55715u0=
 github.com/892294101/parser v0.0.0-20220705125819-3722104ba6ce h1:TZyr0DbLqi+gkTjxcOqMBhGN0XzOGGN0UV8SpCH7Psg=
 github.com/892294101/parser v0.0.0-20220705125819-3722104ba6ce/go.mod h1:QbzGrjoCGxpt0SciFNGnKxm8QjvfaMJ+nb5ISgdNk1c=
 github.com/892294101/parser v0.0.0-20220705165734-1f5b44e5387a h1:ESNSSOBcIHH8huj0cHXEEmcSQXsT3HdhMf6oAv/Gko8=
@@ -38,8 +49,6 @@ github.com/docker/go-connections v0.4.0/go.mod h1:Gbd7IOopHjR8Iph03tsViu4nIes5Xh
 github.com/docker/go-units v0.4.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
 github.com/emirpasic/gods v1.18.1/go.mod h1:8tpGGwCnJ5H4r6BWwaV6OrWmMoPhUl5jm/FMNAnJvWQ=
-github.com/go-mysql-org/go-mysql v1.6.0 h1:19B5fojzZcri/1wj9G/1+ws8RJ3N6rJs2X5c/+kBLuQ=
-github.com/go-mysql-org/go-mysql v1.6.0/go.mod h1:GX0clmylJLdZEYAojPCDTCvwZxbTBrke93dV55715u0=
 github.com/go-sql-driver/mysql v1.3.0/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
@@ -257,10 +266,3 @@ modernc.org/strutil v1.1.2/go.mod h1:OYajnUAcI/MX+XD/Wx7v1bbdvcQSvxgtb0gC+u3d3eg
 modernc.org/y v1.0.1/go.mod h1:Ho86I+LVHEI+LYXoUKlmOMAM1JTXOCfj8qi1T8PsClE=
 modernc.org/y v1.0.3 h1:loQjEQLvt9xDg8Bs1UzRZHukmwYHf90ZMyPQyMRZ1QA=
 modernc.org/y v1.0.3/go.mod h1:GxnDBJHTILYrIAR3js6gcXsRrViKlYNoNxdHQKnfPNg=
-github.com/892294101/dds v1.0.9 h1:wT0U8m8VLF+CX6BeLIxwg0oL8eMZZAvXg7C49FoGCw8=
-github.com/892294101/dds/parser v0.0.0-20220704065302-e50b9430fc65 h1:rSKMIYmHn627tsOL5DxzIrif47C3roJNMCdnxd6D4UM=
-github.com/892294101/dds/parser v0.0.0-20220704065302-e50b9430fc65/go.mod h1:ElJiub4lRy6UZDb+0JHDkGEdr6aOli+ykhyej7VCLoI=
-github.com/892294101/dds/parser v0.0.0-20220705035301-a4fd5cd4d9b3 h1:SV9u+OtPP7nJrTU8DvVhqiP6r/f0HoK2Ag9Ny2y56ws=
-github.com/892294101/dds/parser v0.0.0-20220705035301-a4fd5cd4d9b3/go.mod h1:ElJiub4lRy6UZDb+0JHDkGEdr6aOli+ykhyej7VCLoI=
-github.com/892294101/dds/parser v0.0.0-20220705054302-d8dbab23ccc0 h1:aqQhYzcf81OWFaHsPS2r3oE0pIe3+uoW6UaaK5obU0Q=
-github.com/892294101/dds/parser v0.0.0-20220705054302-d8dbab23ccc0/go.mod h1:ElJiub4lRy6UZDb+0JHDkGEdr6aOli+ykhyej7VCLoI=

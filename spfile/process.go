@@ -2,8 +2,8 @@ package spfile
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/892294101/dds/utils"
+	"github.com/pkg/errors"
 	"regexp"
 	"strings"
 )

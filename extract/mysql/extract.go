@@ -3,14 +3,14 @@ package oramysql
 import (
 	"context"
 	"fmt"
-	cache "github.com/emirpasic/gods/queues/linkedlistqueue"
-	"github.com/go-mysql-org/go-mysql/mysql"
-	"github.com/go-mysql-org/go-mysql/replication"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
-	"github.com/892294101/dds/ddscanal"
 	"github.com/892294101/dds/spfile"
 	"github.com/892294101/dds/utils"
+	"github.com/892294101/go-mysql/canal"
+	"github.com/892294101/go-mysql/mysql"
+	"github.com/892294101/go-mysql/replication"
+	cache "github.com/emirpasic/gods/queues/linkedlistqueue"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"os"
 	"time"
 )
@@ -177,7 +177,6 @@ func (e *ExtractEvent) StartSyncToStream(file int, pos uint32) error {
 			fmt.Println(string(v.Query))
 		case *replication.TableMapEvent:
 
-			
 		}
 
 	}
@@ -188,7 +187,7 @@ func NewMySQLSync() *ExtractEvent {
 	return new(ExtractEvent)
 }
 
-func NewCanalConfig() *ddscanal.Config {
+func NewCanalConfig() *canal.Config {
 
 	return nil
 }

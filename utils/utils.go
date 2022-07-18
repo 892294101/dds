@@ -41,7 +41,7 @@ var (
 	DefaultDataBase               = "test"  // 默认连接数据库
 	DefaultTypes                  = "mysql" // 默认库类型
 	DefaultUserId                 = "root"  // 默认用户名
-	DefaultMaxRetryConnect int    = 3
+	DefaultMaxRetryConnect        = 3
 	DefaultClientCharacter        = "UTF8"
 	DefaultClientCollation        = "UTF8_GENERAL_CI"
 )

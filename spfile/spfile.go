@@ -3,9 +3,9 @@ package spfile
 import (
 	"bufio"
 	"fmt"
+	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"github.com/892294101/dds/utils"
 	"os"
 	"strings"
 )
@@ -195,4 +195,3 @@ func (s *Spfile) PutParamsText() {
 		fmt.Println(res)
 	}
 }
-

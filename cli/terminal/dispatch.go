@@ -151,7 +151,7 @@ func (gosh *shell) handle(ctx context.Context, cmdLine string) (context.Context,
 	if args != nil {
 		cmdName := strings.ToUpper(args[0])
 		var NotFound bool
-		for s, _ := range gosh.commands {
+		for s := range gosh.commands {
 			cmd, ok := gosh.commands[s][cmdName]
 			if ok {
 				NotFound = true

@@ -2,8 +2,8 @@ package spfile
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/892294101/dds/utils"
+	"github.com/pkg/errors"
 	"strings"
 )
 
@@ -74,6 +74,7 @@ func (d *DiscardFile) add(raw *string) error {
 
 	return nil
 }
+
 type DiscardFileSet struct {
 	discard *DiscardFile
 }

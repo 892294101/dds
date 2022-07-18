@@ -14,7 +14,7 @@ import (
 const (
 	PluginsDir    = "lib"
 	CmdSymbolName = "Commands"    // 用来从插件中获取指针的type名称
-	CmdSymbolType = "LibType"    // 用来从插件中获取指针的type名称
+	CmdSymbolType = "LibType"     // 用来从插件中获取指针的type名称
 	DefaultPrompt = "CLI>"        // 默认命令提示符
 	ShellPrompt   = "ShellPrompt" // 命令提示符Key
 	ShellStdout   = "ShellStdout" // Stdout map的key
