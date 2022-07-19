@@ -19872,3 +19872,117 @@ ADD COLUMN `b` polygon NULL AFTER `d`" , This event will be skipped by exception
 2022-07-18 16:23:58.81 I parseEvent 807 [M] rotate to (mysql-bin.000001, 150)
 2022-07-18 16:23:58.81 I parseEvent 807 [M] rotate to (mysql-bin.000002, 4)
 2022-07-18 16:23:58.81 I parseEvent 807 [M] rotate to (mysql-bin.000002, 4)
+2022-07-18 22:27:28.39 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 22:27:28.42 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1002 mysql 10.130.41.234 3306 admin   UTF8 false false <nil> false UTC false 0 0s 0s 3 false false 0 <nil> 0xc0001e9110 0x8f8ac0}
+2022-07-18 22:27:28.42 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000001, 150)
+2022-07-18 22:27:28.56 I parseEvent 815 [M] rotate to (mysql-bin.000001, 150)
+2022-07-18 22:27:28.56 I parseEvent 815 [M] rotate to (mysql-bin.000002, 4)
+2022-07-18 22:27:28.56 I parseEvent 815 [M] rotate to (mysql-bin.000002, 4)
+2022-07-18 22:32:08.74 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 22:32:08.76 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1410 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0x74cda0}
+2022-07-18 22:32:08.81 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 156081) or GTID set <nil>
+2022-07-18 22:32:08.81 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 156081)
+2022-07-18 22:32:08.94 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 156081)
+2022-07-18 22:32:08.95 E run 231 [M] canal start sync binlog err: ERROR 1236 (HY000): Client requested master to start replication from position > file size
+2022-07-18 22:32:08.95 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 156081)
+2022-07-18 22:32:08.95 E run 231 [M] canal start sync binlog err: start sync replication at binlog (mysql-bin.000002, 156081) error Sync is running, must Close first
+2022-07-18 22:33:22.48 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 22:33:22.50 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1904 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0x103cda0}
+2022-07-18 22:33:22.56 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 150) or GTID set <nil>
+2022-07-18 22:33:22.56 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 150)
+2022-07-18 22:33:22.67 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 150)
+2022-07-18 22:33:22.68 I parseEvent 815 [M] rotate to (mysql-bin.000002, 150)
+2022-07-18 22:33:22.68 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-18 22:33:41.74 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 22:33:41.76 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1250 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0xd3cda0}
+2022-07-18 22:33:41.81 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 123123) or GTID set <nil>
+2022-07-18 22:33:41.82 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 123123)
+2022-07-18 22:33:41.93 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 123123)
+2022-07-18 22:33:41.94 E run 231 [M] canal start sync binlog err: ERROR 1236 (HY000): Client requested master to start replication from position > file size
+2022-07-18 22:33:41.94 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 123123)
+2022-07-18 22:33:41.94 E run 231 [M] canal start sync binlog err: start sync replication at binlog (mysql-bin.000002, 123123) error Sync is running, must Close first
+2022-07-18 22:41:27.05 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 22:41:27.08 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1635 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001cb110 0x10fcda0}
+2022-07-18 22:41:27.12 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 123123) or GTID set <nil>
+2022-07-18 22:41:27.13 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 123123)
+2022-07-18 22:41:27.25 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 123123)
+2022-07-18 22:41:27.26 E run 231 [M] canal start sync binlog err: ERROR 1236 (HY000): Client requested master to start replication from position > file size
+2022-07-18 22:41:27.26 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 123123)
+2022-07-18 22:41:27.26 E run 231 [M] canal start sync binlog err: start sync replication at binlog (mysql-bin.000002, 123123) error Sync is running, must Close first
+2022-07-18 22:44:26.05 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 22:44:26.07 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1046 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0xaacda0}
+2022-07-18 22:44:26.12 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 123123) or GTID set <nil>
+2022-07-18 22:44:26.12 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 123123)
+2022-07-18 22:44:26.27 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 123123)
+2022-07-18 22:44:26.29 E run 231 [M] canal start sync binlog err: ERROR 1236 (HY000): Client requested master to start replication from position > file size
+2022-07-18 22:44:26.29 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 123123)
+2022-07-18 22:44:26.29 E run 231 [M] canal start sync binlog err: start sync replication at binlog (mysql-bin.000002, 123123) error Sync is running, must Close first
+2022-07-18 22:49:09.61 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-18 22:49:09.63 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1195 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0xc8cda0}
+2022-07-18 22:49:09.70 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 150) or GTID set <nil>
+2022-07-18 22:49:09.70 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 150)
+2022-07-18 22:49:09.81 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 150)
+2022-07-18 22:49:09.82 I parseEvent 815 [M] rotate to (mysql-bin.000002, 150)
+2022-07-18 22:49:09.82 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-19 00:53:51.84 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-19 00:53:51.85 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1208 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0xebcda0}
+2022-07-19 00:53:51.92 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 150) or GTID set <nil>
+2022-07-19 00:53:51.92 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 150)
+2022-07-19 00:53:52.03 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 150)
+2022-07-19 00:53:52.04 I parseEvent 815 [M] rotate to (mysql-bin.000002, 150)
+2022-07-19 00:53:52.04 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-19 12:46:32.67 E onStream 696 [M] io.ReadFull(header) failed. err read tcp 10.160.16.78:14421->10.130.41.234:3306: wsarecv: An established connection was aborted by the software in your host machine.: connection was bad
+2022-07-19 12:46:33.68 I retrySync 627 [M] begin to re-sync from (mysql-bin.000002, 660)
+2022-07-19 12:46:43.68 E onStream 725 [M] retry sync err: dial tcp 10.130.41.234:3306: i/o timeout, wait 1s and retry again
+2022-07-19 12:46:44.68 I retrySync 627 [M] begin to re-sync from (mysql-bin.000002, 660)
+2022-07-19 12:46:54.68 E onStream 725 [M] retry sync err: dial tcp 10.130.41.234:3306: i/o timeout, wait 1s and retry again
+2022-07-19 12:46:55.68 I retrySync 627 [M] begin to re-sync from (mysql-bin.000002, 660)
+2022-07-19 12:47:05.69 E onStream 720 [M] retry sync err: dial tcp 10.130.41.234:3306: i/o timeout, exceeded max retries (3)
+2022-07-19 12:47:05.69 E run 231 [M] canal start sync binlog err: dial tcp 10.130.41.234:3306: i/o timeout
+2022-07-19 16:22:18.67 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-19 16:22:18.69 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1283 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0x67cda0}
+2022-07-19 16:22:18.71 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 150) or GTID set <nil>
+2022-07-19 16:22:18.71 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 150)
+2022-07-19 16:22:18.76 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 150)
+2022-07-19 16:22:18.76 I parseEvent 815 [M] rotate to (mysql-bin.000002, 150)
+2022-07-19 16:22:18.76 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-19 16:23:03.36 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-19 16:23:03.38 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1205 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc000249110 0xe5cda0}
+2022-07-19 16:23:03.39 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 150) or GTID set <nil>
+2022-07-19 16:23:03.39 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 150)
+2022-07-19 16:23:03.43 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 150)
+2022-07-19 16:23:03.43 I parseEvent 815 [M] rotate to (mysql-bin.000002, 150)
+2022-07-19 16:23:03.43 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-19 16:24:13.79 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-19 16:24:13.80 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1261 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0x11ecda0}
+2022-07-19 16:24:13.81 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 660) or GTID set <nil>
+2022-07-19 16:24:13.82 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 660)
+2022-07-19 16:24:13.84 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 660)
+2022-07-19 16:24:13.84 I parseEvent 815 [M] rotate to (mysql-bin.000002, 660)
+2022-07-19 16:24:13.84 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-19 16:24:39.12 I updateTable 302 [M] table structure changed, clear table cache: admin.httk01
+
+2022-07-19 16:25:09.32 I updateTable 302 [M] table structure changed, clear table cache: admin.httk01
+
+2022-07-19 16:25:32.51 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-19 16:25:32.54 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1644 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001f7110 0x41cda0}
+2022-07-19 16:25:32.55 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 660) or GTID set <nil>
+2022-07-19 16:25:32.55 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 660)
+2022-07-19 16:25:32.59 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 660)
+2022-07-19 16:25:32.60 I parseEvent 815 [M] rotate to (mysql-bin.000002, 660)
+2022-07-19 16:25:32.60 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-19 16:25:32.60 I updateTable 302 [M] table structure changed, clear table cache: admin.httk01
+
+2022-07-19 16:25:32.61 I updateTable 302 [M] table structure changed, clear table cache: admin.httk01
+
+2022-07-19 16:35:12.03 I InitDDSlog 59 [M] Initialize log file: D:\workspace\gowork\src\github.com\892294101\dds\build\logs\ddscli.log
+2022-07-19 16:35:12.05 I NewBinlogSyncer 163 [M] create BinlogSyncer with config {1756 mysql 10.130.41.234 3306 admin   utf8 false false <nil> false UTC true 0 1s 0s 3 false false 0 <nil> 0xc0001ff110 0x480820}
+2022-07-19 16:35:12.06 I tryDump 198 [M] skip dump, use last binlog replication pos (mysql-bin.000002, 660) or GTID set <nil>
+2022-07-19 16:35:12.06 I StartSync 399 [M] begin to sync binlog from position (mysql-bin.000002, 660)
+2022-07-19 16:35:12.11 I startSyncer 36 [M] start sync binlog at binlog file (mysql-bin.000002, 660)
+2022-07-19 16:35:12.11 I parseEvent 815 [M] rotate to (mysql-bin.000002, 660)
+2022-07-19 16:35:12.11 I runSyncBinlog 79 [M] received fake rotate event, next log name is mysql-bin.000002
+2022-07-19 16:35:12.11 I updateTable 302 [M] table structure changed, clear table cache: admin.httk01
+
+2022-07-19 16:35:12.11 I updateTable 302 [M] table structure changed, clear table cache: admin.httk01
+

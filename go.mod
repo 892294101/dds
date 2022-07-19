@@ -3,7 +3,7 @@ module github.com/892294101/dds
 go 1.15
 
 require (
-	github.com/892294101/go-mysql v0.0.0-20220718141803-ca71079297ba // indirect
+	github.com/892294101/go-mysql v0.0.0-20220719082139-3ba37b11c9d8
 	github.com/892294101/parser v0.0.0-20220705174247-7e3b2232c99f
 	github.com/emirpasic/gods v1.18.1
 	github.com/paulmach/go.geo v0.0.0-20180829195134-22b514266d33 // indirect

@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/892294101/dds/ddslog"
-	oramysql "github.com/892294101/dds/extract/mysql"
-	"github.com/892294101/dds/spfile"
 	"github.com/892294101/go-mysql/canal"
 	"github.com/892294101/go-mysql/mysql"
 	"github.com/892294101/go-mysql/replication"
 	"github.com/892294101/parser/ast"
+	"math/rand"
 	"os"
+	"time"
 )
 
 type MyEventHandler struct {
@@ -165,15 +165,7 @@ func (h *MyEventHandler) OnPosSynced(m mysql.Position, g mysql.GTIDSet, b bool) 
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 	fmt.Printf("Header: %d %v %v %v %v\n", e.Header.Timestamp, e.Header.EventSize, e.Header.LogPos, e.Header.Flags, e.Header.ServerID)
 	fmt.Printf("OnRow: Table.Schema: %s Table.Name: %s\n", e.Table.Schema, e.Table.Name)
-	fmt.Printf("OnRow: Table.PKColumns: %v\n", e.Table.PKColumns)
-	fmt.Printf("OnRow: Table.UnsignedColumns: %v\n", e.Table.UnsignedColumns)
-	fmt.Print("OnRow: Table.Indexes:")
-	for i, index := range e.Table.Indexes {
-		fmt.Printf("%d %v", i, index)
-	}
 	fmt.Print("\n")
-
-	fmt.Printf("OnRow: Table.Indexes: %v\n", e.Table.Indexes)
 
 	for i, column := range e.Table.Columns {
 		fmt.Println("OnRow: Table.Columns: ", i, " ", column)
@@ -201,7 +193,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	/*c := new(ddscanal.Config)
+	c := new(canal.Config)
 
 	c.Addr = "10.130.41.234:3306"
 	c.User = "admin"
@@ -220,7 +212,7 @@ func main() {
 	c.HeartbeatPeriod = time.Second
 	c.UseDecimal = true
 
-	ch, err := ddscanal.NewCanal(c)
+	ch, err := canal.NewCanal(c)
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
@@ -228,13 +220,11 @@ func main() {
 	// Register a handler to handle RowsEvent
 	ch.SetEventHandler(&MyEventHandler{})
 
-	fn := mysql.Position{Name: fmt.Sprintf("mysql-bin.%06d", 2), Pos: 156081}
+	fn := mysql.Position{Name: fmt.Sprintf("mysql-bin.%06d", 2), Pos: 660}
 
 	ch.RunFrom(fn)
-	// Start canal
-	ch.Run()
-	*/
-	pfile, err := spfile.LoadSpfile("D:\\workspace\\gowork\\src\\github.com/892294101\\dds\\build\\param\\httk_0001.desc",
+
+	/*pfile, err := spfile.LoadSpfile("D:\\workspace\\gowork\\src\\github.com/892294101\\dds\\build\\param\\httk_0001.desc",
 		spfile.UTF8,
 		log,
 		spfile.GetMySQLName(),
@@ -256,6 +246,6 @@ func main() {
 	err = ext.StartSyncToStream(1, 150)
 	if err != nil {
 		log.Fatalf("StartSyncToStream failed: %s", err)
-	}
+	}*/
 
 }
