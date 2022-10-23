@@ -1,12 +1,14 @@
 package spfile
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type PortModel struct {
@@ -49,6 +51,11 @@ type ClientCollation struct {
 	value *string
 }
 
+type TimeZone struct {
+	key   *string
+	value *time.Location
+}
+
 type dbInfo struct {
 	address            *string             // 数据库地址
 	port               *PortModel          // 数据库端口
@@ -59,6 +66,7 @@ type dbInfo struct {
 	retryMaxConnNumber *RetryMaxConnect    // 连接重连最大次数
 	clientCharacter    *ClientCharacterSet // 客户端字符集
 	clientCollation    *ClientCollation    // 客户端字符集
+	timeZone           *TimeZone
 }
 
 func (d *dbInfo) GetAddress() *string         { return d.address }
@@ -70,6 +78,8 @@ func (d *dbInfo) GetServerID() *uint32        { return d.serverId.value }
 func (d *dbInfo) GetRetryConnect() *int       { return d.retryMaxConnNumber.value }
 func (d *dbInfo) GetClientCharacter() *string { return d.clientCharacter.value }
 func (d *dbInfo) GetClientCollation() *string { return d.clientCollation.value }
+func (d *dbInfo) GetTimeZone() *time.Location { return d.timeZone.value }
+func (d *dbInfo) GetConnInfo() *dbInfo        { return d }
 
 type SourceDB struct {
 	supportParams map[string]map[string]string // 参数支持吃数据库和进程
@@ -86,9 +96,6 @@ func (s *SourceDB) put() string {
 func (s *SourceDB) init() {
 	s.supportParams = map[string]map[string]string{
 		utils.MySQL: {
-			utils.Extract: utils.Extract,
-		},
-		utils.MariaDB: {
 			utils.Extract: utils.Extract,
 		},
 	}
@@ -122,7 +129,7 @@ func (s *SourceDB) parse(raw *string) error {
 		case strings.EqualFold(sdb[i], utils.SourceDBType):
 			s.paramPrefix = &sdb[i]
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.SourceDBType)
+				return errors.Errorf("%s Value must be specified", utils.SourceDBType)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -141,7 +148,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.Port):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.Port)
+				return errors.Errorf("%s Value must be specified", utils.Port)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -164,7 +171,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.Types):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.Types)
+				return errors.Errorf("%s Value must be specified", utils.Types)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -177,7 +184,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.UserId):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.UserId)
+				return errors.Errorf("%s Value must be specified", utils.UserId)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -190,7 +197,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.PassWord):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.PassWord)
+				return errors.Errorf("%s Value must be specified", utils.PassWord)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -203,7 +210,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.ServerId):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.ServerId)
+				return errors.Errorf("%s Value must be specified", utils.ServerId)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -222,7 +229,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.Retry):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.Retry)
+				return errors.Errorf("%s Value must be specified", utils.Retry)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -232,11 +239,10 @@ func (s *SourceDB) parse(raw *string) error {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
 
-			p, err := strconv.Atoi(*NextVal)
+			retryNum, err := strconv.Atoi(*NextVal)
 			if err != nil {
 				return errors.Errorf("%s %s conversion failed", *NextVal, utils.Retry)
 			}
-			retryNum := int(p)
 
 			if retryNum > 3 && retryNum < 12 {
 				s.DBInfo.retryMaxConnNumber = &RetryMaxConnect{key: &sdb[i], value: &retryNum}
@@ -244,7 +250,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.Character):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.Character)
+				return errors.Errorf("%s Value must be specified", utils.Character)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -257,7 +263,7 @@ func (s *SourceDB) parse(raw *string) error {
 			i += 1
 		case strings.EqualFold(sdb[i], utils.Collation):
 			if i+1 > sdbLength {
-				return errors.Errorf("%s value must be specified", utils.Collation)
+				return errors.Errorf("%s Value must be specified", utils.Collation)
 			}
 			NextVal := &sdb[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -267,6 +273,24 @@ func (s *SourceDB) parse(raw *string) error {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
 			s.DBInfo.clientCollation = &ClientCollation{key: &sdb[i], value: NextVal}
+			i += 1
+		case strings.EqualFold(sdb[i], utils.TimeZone):
+			if i+1 > sdbLength {
+				return errors.Errorf("%s Value must be specified", utils.TimeZone)
+			}
+			NextVal := &sdb[i+1]
+			if utils.KeyCheck(NextVal) {
+				return errors.Errorf("keywords cannot be used: %s", *NextVal)
+			}
+			if s.DBInfo.clientCollation != nil {
+				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
+			}
+
+			localTime, err := time.LoadLocation("Asia/Shanghai")
+			if err != nil {
+				return errors.Errorf("Unknown time zone: ", NextVal)
+			}
+			s.DBInfo.timeZone = &TimeZone{key: &sdb[i], value: localTime}
 			i += 1
 		default:
 			return errors.Errorf("unknown keyword: %s", sdb[i])
@@ -296,7 +320,11 @@ func (s *SourceDB) parse(raw *string) error {
 	}
 
 	if s.DBInfo.clientCollation == nil {
-		s.DBInfo.clientCollation = &ClientCollation{key: &utils.Collation, value: &utils.DefaultClientCharacter}
+		s.DBInfo.clientCollation = &ClientCollation{key: &utils.Collation, value: &utils.DefaultClientCollation}
+	}
+
+	if s.DBInfo.timeZone == nil {
+		s.DBInfo.timeZone = &TimeZone{key: &utils.TimeZone, value: utils.DefaultTimeZone}
 	}
 
 	if s.DBInfo.passWord == nil {
@@ -312,6 +340,22 @@ func (s *SourceDB) add(raw *string) error {
 
 type sourceDBSet struct {
 	sdb *SourceDB
+}
+
+func (sd *sourceDBSet) MarshalJson() ([]byte, error) {
+	var db SourceDBJson
+	db.Type = sd.sdb.paramPrefix
+	db.Address = sd.sdb.DBInfo.GetAddress()
+	db.Port = sd.sdb.DBInfo.GetPort()
+	db.Types = sd.sdb.DBInfo.GetTypes()
+	db.UserId = sd.sdb.DBInfo.GetUserId()
+	db.PassWord = sd.sdb.DBInfo.GetPassWord()
+	db.ServerId = sd.sdb.DBInfo.GetServerID()
+	db.RetryMaxConnNumber = sd.sdb.DBInfo.GetRetryConnect()
+	db.ClientCharacter = sd.sdb.DBInfo.GetClientCharacter()
+	db.ClientCollation = sd.sdb.DBInfo.GetClientCollation()
+	dbs, err := json.Marshal(db)
+	return dbs, err
 }
 
 var sourceDBSetBus sourceDBSet

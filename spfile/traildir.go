@@ -1,6 +1,7 @@
 package spfile
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
@@ -11,8 +12,8 @@ import (
 type TrailAttribute struct {
 	dir       *string
 	sizeKey   *string
-	sizeValue *int
-	sizeUnit  *string
+	SizeValue *int
+	SizeUnit  *string
 	keepKey   *string
 	keepValue *int
 	keepUnit  *string
@@ -24,11 +25,11 @@ func (t *TrailAttribute) GetDir() *string  { return t.dir }
 func (t *TrailAttribute) setSizeKey(s *string) { t.sizeKey = s }
 func (t *TrailAttribute) GetSizeKey() *string  { return t.sizeKey }
 
-func (t *TrailAttribute) setSizeValue(s *int) { t.sizeValue = s }
-func (t *TrailAttribute) GetSizeValue() *int  { return t.sizeValue }
+func (t *TrailAttribute) setSizeValue(s *int) { t.SizeValue = s }
+func (t *TrailAttribute) GetSizeValue() *int  { return t.SizeValue }
 
-func (t *TrailAttribute) setSizeUnit(s *string) { t.sizeUnit = s }
-func (t *TrailAttribute) GetSizeUnit() *string  { return t.sizeUnit }
+func (t *TrailAttribute) setSizeUnit(s *string) { t.SizeUnit = s }
+func (t *TrailAttribute) GetSizeUnit() *string  { return t.SizeUnit }
 
 func (t *TrailAttribute) setKeepKey(s *string) { t.keepKey = s }
 func (t *TrailAttribute) GetKeepKey() *string  { return t.keepKey }
@@ -39,6 +40,8 @@ func (t *TrailAttribute) GetKeepVal() *int  { return t.keepValue }
 func (t *TrailAttribute) setKeepUnit(s *string) { t.keepUnit = s }
 func (t *TrailAttribute) GetKeepUnit() *string  { return t.keepUnit }
 
+func (t *TrailAttribute) GetTrail() *TrailAttribute { return t }
+
 type TrailDir struct {
 	supportParams     map[string]map[string]string
 	paramPrefix       *string
@@ -46,7 +49,7 @@ type TrailDir struct {
 }
 
 func (t *TrailDir) put() string {
-	return fmt.Sprintf("%s %s %s %d %s %d %s", *t.paramPrefix, *t.DirTrailAttribute.GetDir(), *t.DirTrailAttribute.GetSizeKey(), *t.DirTrailAttribute.GetSizeValue(), *t.DirTrailAttribute.GetKeepKey(), *t.DirTrailAttribute.GetKeepVal(), *t.DirTrailAttribute.GetKeepUnit())
+	return fmt.Sprintf("%s %s %s %d %s %d %s\n", *t.paramPrefix, *t.DirTrailAttribute.GetDir(), *t.DirTrailAttribute.GetSizeKey(), *t.DirTrailAttribute.GetSizeValue(), *t.DirTrailAttribute.GetKeepKey(), *t.DirTrailAttribute.GetKeepVal(), *t.DirTrailAttribute.GetKeepUnit())
 }
 
 // 初始化参数可以支持的数据库和进程
@@ -56,7 +59,7 @@ func (t *TrailDir) init() {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
-		utils.MariaDB: {
+		utils.Oracle: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
@@ -84,7 +87,7 @@ func (t *TrailDir) parse(raw *string) error {
 		case strings.EqualFold(trail[i], utils.TrailDirType):
 			t.paramPrefix = &trail[i]
 			if i+1 > trailLength {
-				return errors.Errorf("%s value must be specified", trail[i])
+				return errors.Errorf("%s Value must be specified", trail[i])
 			}
 			NextVal := &trail[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -100,22 +103,22 @@ func (t *TrailDir) parse(raw *string) error {
 
 			t.DirTrailAttribute.setSizeKey(&trail[i])
 			if i+1 > trailLength {
-				return errors.Errorf("%s value must be specified", utils.TrailSizeKey)
+				return errors.Errorf("%s Value must be specified", utils.TrailSizeKey)
 			}
 			NextVal := &trail[i+1]
 			if utils.KeyCheck(NextVal) {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
-			if t.DirTrailAttribute.sizeValue != nil {
+			if t.DirTrailAttribute.SizeValue != nil {
 				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
 			}
 			s, err := strconv.Atoi(*NextVal)
 			if err != nil {
-				return errors.Errorf("%s value is not a numeric integer: %s", trail[i], *NextVal)
+				return errors.Errorf("%s Value is not a numeric integer: %s", trail[i], *NextVal)
 			}
 
 			if s < utils.DefaultTrailMinSize {
-				return errors.Errorf("%s value %s cannot be less than the minimum size %d", trail[i], *NextVal, utils.DefaultTrailMinSize)
+				return errors.Errorf("%s Value %s cannot be less than the minimum size %d", trail[i], *NextVal, utils.DefaultTrailMinSize)
 			}
 
 			t.DirTrailAttribute.setSizeValue(&s)
@@ -124,7 +127,7 @@ func (t *TrailDir) parse(raw *string) error {
 
 			t.DirTrailAttribute.setKeepKey(&trail[i])
 			if i+1 > trailLength {
-				return errors.Errorf("%s value must be specified", trail[i])
+				return errors.Errorf("%s Value must be specified", trail[i])
 			}
 			NextVal := &trail[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -135,13 +138,13 @@ func (t *TrailDir) parse(raw *string) error {
 			}
 			s, err := strconv.Atoi(*NextVal)
 			if err != nil {
-				return errors.Errorf("%s value is not a numeric integer: %s", trail[i], *NextVal)
+				return errors.Errorf("%s Value is not a numeric integer: %s", trail[i], *NextVal)
 			}
 			t.DirTrailAttribute.setKeepVal(&s)
 			i += 1
 
 			if i+1 > trailLength {
-				return errors.Errorf("%s unit value must be specified", *t.DirTrailAttribute.GetKeepKey())
+				return errors.Errorf("%s unit Value must be specified", *t.DirTrailAttribute.GetKeepKey())
 			}
 			NextVal = &trail[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -155,7 +158,7 @@ func (t *TrailDir) parse(raw *string) error {
 				t.DirTrailAttribute.setKeepUnit(NextVal)
 				i += 1
 			} else {
-				return errors.Errorf("%s unit value Only supported %s/%s/%s", *t.DirTrailAttribute.GetKeepKey(), utils.MB, utils.GB, utils.DAY)
+				return errors.Errorf("%s unit Value Only supported %s/%s/%s", *t.DirTrailAttribute.GetKeepKey(), utils.MB, utils.GB, utils.DAY)
 			}
 		default:
 			return errors.Errorf("unknown parameter: %s", trail[i])
@@ -165,8 +168,8 @@ func (t *TrailDir) parse(raw *string) error {
 	if t.DirTrailAttribute == nil {
 		t.DirTrailAttribute = &TrailAttribute{
 			sizeKey:   &utils.TrailSizeKey,
-			sizeValue: &utils.DefaultTrailMaxSize,
-			sizeUnit:  &utils.MB,
+			SizeValue: &utils.DefaultTrailMaxSize,
+			SizeUnit:  &utils.MB,
 			keepKey:   &utils.TrailKeepKey,
 			keepValue: &utils.DefaultTrailKeepValue,
 			keepUnit:  &utils.DAY,
@@ -181,7 +184,9 @@ func (t *TrailDir) parse(raw *string) error {
 			t.DirTrailAttribute.setKeepKey(&utils.TrailKeepKey)
 			t.DirTrailAttribute.setKeepVal(&utils.DefaultTrailKeepValue)
 			t.DirTrailAttribute.setKeepUnit(&utils.DAY)
-
+		}
+		if t.DirTrailAttribute.GetSizeUnit() == nil {
+			t.DirTrailAttribute.setSizeUnit(&utils.MB)
 		}
 	}
 
@@ -195,6 +200,18 @@ func (t *TrailDir) add(raw *string) error {
 
 type trailDirSet struct {
 	trailDir *TrailDir
+}
+
+func (t *trailDirSet) MarshalJson() ([]byte, error) {
+	var te TrailDirJson
+	te.Type = t.trailDir.paramPrefix
+	te.Dir = t.trailDir.DirTrailAttribute.GetDir()
+	te.Size = t.trailDir.DirTrailAttribute.GetSizeValue()
+	te.SizeUnit = t.trailDir.DirTrailAttribute.GetSizeUnit()
+	te.Keep = t.trailDir.DirTrailAttribute.GetKeepVal()
+	te.KeepUnit = t.trailDir.DirTrailAttribute.GetKeepUnit()
+	tej, err := json.Marshal(te)
+	return tej, err
 }
 
 var trailDirBus trailDirSet

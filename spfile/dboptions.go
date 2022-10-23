@@ -1,6 +1,7 @@
 package spfile
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
@@ -35,7 +36,7 @@ func (o *Options) GetReplicates() (*bool, error) {
 	if ok {
 		return &v, nil
 	}
-	return nil, errors.Errorf("%s Parameter value acquisition failed", utils.GetReplicates)
+	return nil, errors.Errorf("%s Parameter Value acquisition failed", utils.GetReplicates)
 }
 
 func (o *Options) GetSuppressionTrigger() (*bool, error) {
@@ -43,7 +44,7 @@ func (o *Options) GetSuppressionTrigger() (*bool, error) {
 	if ok {
 		return &v, nil
 	}
-	return nil, errors.Errorf("%s Parameter value acquisition failed", utils.SuppressionTrigger)
+	return nil, errors.Errorf("%s Parameter Value acquisition failed", utils.SuppressionTrigger)
 }
 
 func (o *Options) GetIgnoreForeignkey() (*bool, error) {
@@ -51,7 +52,7 @@ func (o *Options) GetIgnoreForeignkey() (*bool, error) {
 	if ok {
 		return &v, nil
 	}
-	return nil, errors.Errorf("%s Parameter value acquisition failed", utils.IgnoreForeignkey)
+	return nil, errors.Errorf("%s Parameter Value acquisition failed", utils.IgnoreForeignkey)
 }
 
 type DBOptions struct {
@@ -66,6 +67,7 @@ func (d *DBOptions) put() string {
 	for s, b := range d.OptionsSet.opts {
 		msg += fmt.Sprintf(" %s %v", s, b)
 	}
+	msg += fmt.Sprintf("\n")
 	return msg
 }
 
@@ -76,7 +78,7 @@ func (d *DBOptions) init() {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
-		utils.MariaDB: {
+		utils.Oracle: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
@@ -113,7 +115,7 @@ func (d *DBOptions) parse(raw *string) error {
 		if strings.EqualFold(options[i], utils.DBOptionsType) {
 			d.paramPrefix = &options[i]
 			if i+1 > optionsLength {
-				return errors.Errorf("%s value must be specified", options[i])
+				return errors.Errorf("%s Value must be specified", options[i])
 			}
 		} else {
 			err := d.OptionsSet.setOption(&options[i])
@@ -133,6 +135,16 @@ func (d *DBOptions) add(raw *string) error {
 
 type DBOptionsSet struct {
 	dbOps *DBOptions
+}
+
+func (d *DBOptionsSet) MarshalJson() ([]byte, error) {
+	var dbo DBOptionsJson
+	dbo.Type = d.dbOps.paramPrefix
+	for k, v := range d.dbOps.OptionsSet.opts {
+		dbo.Opts = append(dbo.Opts, &OptsList{Key: k, Value: v})
+	}
+	dbos, err := json.Marshal(dbo)
+	return dbos, err
 }
 
 var DBOptionsBus DBOptionsSet

@@ -1,6 +1,7 @@
 package spfile
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
@@ -9,10 +10,13 @@ import (
 )
 
 type ProcessInfo struct {
-	name *string
+	Name *string
 }
 
-func (p *ProcessInfo) GetName() *string { return p.name }
+func (p *ProcessInfo) GetName() *string {
+	n := strings.ToUpper(*p.Name)
+	return &n
+}
 
 type Process struct {
 	supportParams map[string]map[string]string
@@ -21,7 +25,7 @@ type Process struct {
 }
 
 func (p *Process) put() string {
-	return fmt.Sprintf("%s %s", *p.paramPrefix, *p.ProInfo.name)
+	return fmt.Sprintf("%s %s\n", *p.paramPrefix, *p.ProInfo.Name)
 }
 
 // 初始化参数可以支持的数据库和进程
@@ -31,7 +35,7 @@ func (p *Process) init() {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
-		utils.MariaDB: {
+		utils.Oracle: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
@@ -56,7 +60,8 @@ func (p *Process) parse(raw *string) error {
 	if matched == true {
 		rd := strings.Split(*raw, " ")
 		p.paramPrefix = &rd[0]
-		p.ProInfo.name = &rd[1]
+		name := strings.ToLower(rd[1])
+		p.ProInfo.Name = &name
 		return nil
 	}
 
@@ -69,6 +74,14 @@ func (p *Process) add(raw *string) error {
 
 type processSet struct {
 	process *Process
+}
+
+func (p *processSet) MarshalJson() ([]byte, error) {
+	var pj ProcessJson
+	pj.Type = p.process.paramPrefix
+	pj.Name = p.process.ProInfo.Name
+	pro, err := json.Marshal(pj)
+	return pro, err
 }
 
 var ProcessBus processSet

@@ -12,7 +12,9 @@ import (
 )
 
 //自义定日志结构
-type myFormatter struct{}
+type myFormatter struct {
+	groupid string
+}
 
 func (s *myFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	timestamp := time.Now().Local().Format("2006-01-02 15:04:05.00")
@@ -25,16 +27,20 @@ func (s *myFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	var msg string
 	fName := entry.Caller.Function[strings.LastIndex(entry.Caller.Function, ".")+1:]
 	if reason == nil {
-		msg = fmt.Sprintf("%s %s %s %v [M] %s\n", timestamp, strings.ToUpper(entry.Level.String())[:1], fName, entry.Caller.Line, entry.Message)
+		msg = fmt.Sprintf("%s %s %s %v [M] [%s] %s\n", timestamp, strings.ToUpper(entry.Level.String())[:1], fName, entry.Caller.Line, s.groupid, entry.Message)
 	} else {
-		msg = fmt.Sprintf("%s %s %s %d [M] %s %v\n", timestamp, strings.ToUpper(entry.Level.String())[:1], fName, entry.Caller.Line, entry.Message, reason)
+		msg = fmt.Sprintf("%s %s %s %d [M] [%s] %s %v\n", timestamp, strings.ToUpper(entry.Level.String())[:1], fName, entry.Caller.Line, s.groupid, entry.Message, reason)
 	}
 	return []byte(msg), nil
 }
 
+func (s *myFormatter) SetGroupId(groupid string) {
+	s.groupid = groupid
+}
+
 //初始化日志输出
 //定义为同事输出日志内容到标准输出和和日志文件
-func InitDDSlog() (*logrus.Logger, error) {
+func InitDDSlog(groupid string) (*logrus.Logger, error) {
 	ddslog := logrus.New()
 
 	dir, err := utils.GetHomeDirectory()
@@ -44,8 +50,8 @@ func InitDDSlog() (*logrus.Logger, error) {
 
 	log := filepath.Join(*dir, "logs", "ddscli.log")
 	logfile, err := os.OpenFile(log, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
-	writers := []io.Writer{logfile, os.Stdout}
-	//writers := []io.Writer{logfile}
+	//writers := []io.Writer{logfile, os.Stdout}
+	writers := []io.Writer{logfile}
 	fileAndStdoutWriter := io.MultiWriter(writers...)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Log file open failed: %s", err)
@@ -53,9 +59,12 @@ func InitDDSlog() (*logrus.Logger, error) {
 	} else {
 		ddslog.SetOutput(fileAndStdoutWriter)
 	}
-	ddslog.SetLevel(logrus.InfoLevel)
+	ddslog.SetLevel(logrus.DebugLevel)
 	ddslog.SetReportCaller(true)
-	ddslog.SetFormatter(new(myFormatter))
-	ddslog.Infof("Initialize log file: %s", log)
+
+	delog := new(myFormatter)
+	delog.SetGroupId(groupid)
+	ddslog.SetFormatter(delog)
+	//ddslog.Infof("Initialize log file: %s", log)
 	return ddslog, nil
 }

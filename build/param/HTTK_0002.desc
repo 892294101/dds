@@ -1,0 +1,46 @@
+process httk_0002
+--sourcedb 10.130.41.234 port 3306  serverid 1002   type mysql userid admin password admin
+userid system@10.130.41.7 port 1521 sid app password oracle retry 3 character american_america.zhs16gbk timezone utc
+traildir ./data/httk2 size 200 keep 3 day
+discardfile ./discard/httk2
+ddl include objname httk.*   objtype "table,index"
+ddl include objname httk.* optype drop
+ddl include objname lender.* objtype FUNCTION
+ddl include objname "borrower".* optype drop
+ddl include objname "borrower".* optype create
+ddl include objname borrower.* optype create
+
+ddl exclude objname httk.*   objtype "table,index"
+ddl exclude objname httk.* optype drop
+ddl exclude objname lender.* objtype FUNCTION
+ddl exclude objname "borrower".* optype drop objtype "table,index"
+ddl exclude objname "borrower".* optype create  objtype function
+ddl exclude objname  borrower.* optype alter
+
+dboptions ignorereplicates suppressiontrigger ignoreforeignkey
+--ignorereplicates getreplicates suppressiontrigger ignoreforeignkey
+
+table "httk"."test02";
+table httk.test03;
+table httk.test022;
+table httk.test0222;
+
+
+tableexclude httk.test1;
+tableexclude httk.test2;
+tableexclude httk.test3;
+tableexclude httk.test4;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

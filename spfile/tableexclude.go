@@ -1,33 +1,100 @@
 package spfile
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"regexp"
+	"strings"
 )
 
-type excludeOwnerTable struct {
-	ownerValue string
-	tableValue string
+type TableExcludeList struct {
+	tableList       map[ownerTable]*string        // 参数提取的数据
+	schemaTableList map[string]map[string]*string // 过滤基数据
+	exclude         map[string]map[string]bool    // 过滤的数据，包含或排除
 }
 
 type ExcludeTableSets struct {
 	supportParams  map[string]map[string]string
 	paramPrefix    *string
-	TableList      map[excludeOwnerTable]*string
-	tableListIndex []excludeOwnerTable
+	TableBus       *TableExcludeList
+	tableListIndex []ownerTable
+}
+
+func (d *TableExcludeList) filterExclude(owner, table *string, log *logrus.Logger) bool {
+	// 加载参数文件中的库和表到 schemaTableList
+	for st, _ := range d.tableList {
+		v, ok := d.schemaTableList[st.ownerValue]
+		if ok {
+			v[st.tableValue] = nil
+		} else {
+			d.schemaTableList[st.ownerValue] = map[string]*string{st.tableValue: nil}
+		}
+	}
+	if len(d.schemaTableList) > 0 {
+		v, ok := d.exclude[*owner][*table]
+		if ok {
+			return v
+		} else {
+			stOk := d.filtertableList(owner, table, log)
+			if stOk {
+				d.exclude[*owner] = map[string]bool{*table: true}
+				log.Infof("add schema and table to exclude filter whitelist(schema: %v. table: %v)", *owner, *table)
+			} else {
+				d.exclude[*owner] = map[string]bool{*table: false}
+				log.Infof("add schema and table to exclude filter blacklist(schema: %v. table: %v)", *owner, *table)
+			}
+			return stOk
+		}
+	}else{
+		return true
+	}
+
+}
+
+func (d *TableExcludeList) filtertableList(owner, table *string, log *logrus.Logger) bool {
+	_, ok := d.schemaTableList[*owner][*table]
+	if ok {
+		return true
+	} else {
+		v, ok := d.schemaTableList[*owner]
+		if ok {
+			for val, _ := range v {
+				if MatchSchemaTable(owner, table, &val, log) {
+					return true
+				}
+			}
+		} else {
+			return false
+		}
+
+	}
+	return false
+}
+func (d *TableExcludeList) Filter(owner, table *string, log *logrus.Logger) (bool, error) {
+	if owner == nil {
+		return false, errors.Errorf("filter owner name cannot be null")
+	}
+	if table == nil {
+		return false, errors.Errorf("filter table name cannot be null")
+	}
+	if log == nil {
+		return false, errors.Errorf("filter Logger be null")
+	}
+	return d.filterExclude(owner, table, log), nil
 }
 
 func (e *ExcludeTableSets) put() string {
-	var msg string
+	var msg strings.Builder
 	for _, index := range e.tableListIndex {
-		_, ok := e.TableList[index]
+		_, ok := e.TableBus.tableList[index]
 		if ok {
-			msg += fmt.Sprintf("%s %s.%s\n", *e.paramPrefix, index.ownerValue, index.tableValue)
+			msg.WriteString(fmt.Sprintf("%s %s.%s;\n", *e.paramPrefix, index.ownerValue, index.tableValue))
 		}
 	}
-	return msg
+	return strings.Trim(msg.String(), "\n")
 }
 
 // 当传入参数时, 初始化特定参数的值
@@ -37,13 +104,11 @@ func (e *ExcludeTableSets) init() {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
-		utils.MariaDB: {
+		utils.Oracle: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
 	}
-	e.TableList = make(map[excludeOwnerTable]*string)
-
 }
 
 // 当没有参数时, 初始化此参数默认值
@@ -79,10 +144,10 @@ func (e *ExcludeTableSets) parse(raw *string) error {
 		e.paramPrefix = &result[1]
 	}
 
-	ownerTable := excludeOwnerTable{result[3], result[5]}
-	_, ok := e.TableList[ownerTable]
+	ownerTable := ownerTable{ValToUper(result[3]), ValToUper(result[5])}
+	_, ok := e.TableBus.tableList[ownerTable]
 	if !ok {
-		e.TableList[ownerTable] = nil
+		e.TableBus.tableList[ownerTable] = nil
 		e.tableListIndex = append(e.tableListIndex, ownerTable)
 	}
 	return nil
@@ -101,10 +166,10 @@ func (e *ExcludeTableSets) add(raw *string) error {
 	}
 	result = utils.TrimKeySpace(result)
 
-	ownerTable := excludeOwnerTable{result[3], result[5]}
-	_, ok := e.TableList[ownerTable]
+	ownerTable := ownerTable{ValToUper(result[3]), ValToUper(result[5])}
+	_, ok := e.TableBus.tableList[ownerTable]
 	if !ok {
-		e.TableList[ownerTable] = nil
+		e.TableBus.tableList[ownerTable] = nil
 		e.tableListIndex = append(e.tableListIndex, ownerTable)
 	}
 
@@ -115,10 +180,27 @@ type ExcludeTableSet struct {
 	table *ExcludeTableSets
 }
 
+func (e *ExcludeTableSet) MarshalJson() ([]byte, error) {
+	var tjSet []TableExcludeJson
+	for table := range e.table.TableBus.tableList {
+		var te TableExcludeJson
+		te.Type = e.table.paramPrefix
+		te.Owner = table.ownerValue
+		te.Table = table.tableValue
+		tjSet = append(tjSet, te)
+	}
+	te, err := json.Marshal(tjSet)
+	return te, err
+}
+
 var ExcludeTableSetBus ExcludeTableSet
 
 func (e *ExcludeTableSet) Init() {
 	e.table = new(ExcludeTableSets)
+	e.table.TableBus = new(TableExcludeList)
+	e.table.TableBus.tableList = make(map[ownerTable]*string)
+	e.table.TableBus.schemaTableList = make(map[string]map[string]*string)
+	e.table.TableBus.exclude = make(map[string]map[string]bool)
 }
 
 func (e *ExcludeTableSet) Add(raw *string) error {

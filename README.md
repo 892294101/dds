@@ -1,5 +1,13 @@
 # dds
 
+
+// protoc --go_out=. DataEventV1.proto
+protoc *.proto --gofast_out=.
+
+protoc *.proto --gofast_out=plugins=grpc:pcb
+
+
+
 当前操作支持情况:
 TABLE DDL(
     Rename Table                        --支持
@@ -158,3 +166,54 @@ insert into `admin`.`geom6`(d) values( st_geomfromtext('multilinestring((1 1,2 2
 insert into `admin`.`geom6`(b) values( st_geomfromtext('polygon((0 0,0 3,3 0,0 0),(1 1,1 2,2 1,1 1))') ); 
 
 
+ pfile, err := spfile.LoadSpfile("D:\\workspace\\gowork\\src\\github.com/892294101\\dds\\build\\param\\httk_0001.desc",
+		spfile.UTF8,
+		log,
+		spfile.GetMySQLName(),
+		spfile.GetExtractName())
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
+
+	if err := pfile.Production(); err != nil {
+		log.Fatalf("%s", err)
+	}
+
+
+	ext := oramysql.NewMySQLSync()
+	err = ext.InitSyncerConfig(log, pfile)
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
+
+	err = ext.StartSyncToStream(2, 1986)
+	if err != nil {
+		log.Fatalf("StartSyncToStream failed: %s", err)
+	} 
+	
+	for i, row := range d.LCR.RowsEvent.Rows {
+
+		for ind, value := range row {
+			if value != nil {
+				//d.ColValList[ind] = &protolib.ColumnValue{Existing: (*int32)(unsafe.Pointer(&value.Existing)), Length: (*int32)(unsafe.Pointer(&value.Length)), ColType: (*uint32)(unsafe.Pointer(&value.ColType)), PointField: (*int32)(unsafe.Pointer(&value.PointField)), ValBytes: value.ValBytes, ValInt32: &value.ValInt32, ValInt64: &value.ValInt64, ValInt8: (*int32)(unsafe.Pointer(&value.ValInt8)), ValInt16: (*int32)(unsafe.Pointer(&value.ValInt16)), ValString: &value.ValString, ValFloat32: &value.ValFloat32, ValFloat64: &value.ValFloat64, ValUint32: &value.ValUint32, ValUint64: &value.ValUint64, ValTime: timestamppb.New(value.ValTime), ValInt: (*int32)(unsafe.Pointer(&value.ValInt))}
+				d.ColVal.Existing = (*int32)(unsafe.Pointer(&value.Existing))
+				d.ColVal.Length = (*int32)(unsafe.Pointer(&value.Length))
+				d.ColVal.ColType = (*uint32)(unsafe.Pointer(&value.ColType))
+				d.ColVal.PointField = (*int32)(unsafe.Pointer(&value.PointField))
+				d.ColVal.ValBytes = value.ValBytes
+				d.ColVal.ValInt32 = &value.ValInt32
+				d.ColVal.ValInt64 = &value.ValInt64
+				d.ColVal.ValInt8 = (*int32)(unsafe.Pointer(&value.ValInt8))
+				d.ColVal.ValInt16 = (*int32)(unsafe.Pointer(&value.ValInt16))
+				d.ColVal.ValString = &value.ValString
+				d.ColVal.ValFloat32 = &value.ValFloat32
+				d.ColVal.ValFloat64 = &value.ValFloat64
+				d.ColVal.ValUint32 = &value.ValUint32
+				d.ColVal.ValUint64 = &value.ValUint64
+				d.ColVal.ValTime = timestamppb.New(value.ValTime)
+				d.ColVal.ValInt = (*int32)(unsafe.Pointer(&value.ValInt))
+			}
+			d.ColValList[ind] = d.ColVal
+		}
+		d.RowList[i] = &protolib.RowsList{Cv: d.ColValList}
+	}	

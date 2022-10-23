@@ -1,35 +1,90 @@
 package spfile
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"regexp"
 )
 
-type ownerTable struct {
-	ownerValue string
-	tableValue string
-}
-
-type ETL struct {
-	addColumn    string
-	deleteColumn string
-	updateColumn string
-	mapColumn    string
+type TableList struct {
+	tableList       map[ownerTable]*ETL           // 参数提取的数据
+	schemaTableList map[string]map[string]*string // 过滤基数据
+	include         map[string]map[string]bool    // 过滤的数据，包含或排除
 }
 
 type TableSets struct {
 	supportParams  map[string]map[string]string
 	paramPrefix    *string
-	TableList      map[ownerTable]*ETL
+	TableBus       *TableList
 	tableListIndex []ownerTable
+}
+
+func (d *TableList) filterInclude(owner, table *string, log *logrus.Logger) bool {
+	// 加载参数文件中的库和表到 schemaTableList
+	for st, _ := range d.tableList {
+		v, ok := d.schemaTableList[st.ownerValue]
+		if ok {
+			v[st.tableValue] = nil
+		} else {
+			d.schemaTableList[st.ownerValue] = map[string]*string{st.tableValue: nil}
+		}
+	}
+
+	v, ok := d.include[*owner][*table]
+	if ok {
+		return v
+	} else {
+		stOk := d.filterTableList(owner, table, log)
+		if stOk {
+			d.include[*owner] = map[string]bool{*table: true}
+			log.Infof("add schema and table to table filter whitelist(schema: %v. table: %v)", *owner, *table)
+		} else {
+			d.include[*owner] = map[string]bool{*table: false}
+			log.Infof("add schema and table to table filter blacklist(schema: %v. table: %v)", *owner, *table)
+		}
+		return stOk
+	}
+}
+
+func (d *TableList) filterTableList(owner, table *string, log *logrus.Logger) bool {
+	_, ok := d.schemaTableList[*owner][*table]
+	if ok {
+		return true
+	} else {
+		v, ok := d.schemaTableList[*owner]
+		if ok {
+			for val, _ := range v {
+				if MatchSchemaTable(owner, table, &val, log) {
+					return true
+				}
+			}
+		} else {
+			return false
+		}
+
+	}
+	return false
+}
+func (d *TableList) Filter(owner, table *string, log *logrus.Logger) (bool, error) {
+	if owner == nil {
+		return false, errors.Errorf("filter owner name cannot be null")
+	}
+	if table == nil {
+		return false, errors.Errorf("filter table name cannot be null")
+	}
+	if log == nil {
+		return false, errors.Errorf("filter Logger be null")
+	}
+	return d.filterInclude(owner, table, log), nil
 }
 
 func (t *TableSets) put() string {
 	var msg string
 	for i, index := range t.tableListIndex {
-		_, ok := t.TableList[index]
+		_, ok := t.TableBus.tableList[index]
 		if ok {
 			if i > 0 {
 				msg += fmt.Sprintf("\n")
@@ -38,6 +93,7 @@ func (t *TableSets) put() string {
 		}
 
 	}
+	msg += fmt.Sprintf("\n")
 	return msg
 }
 
@@ -48,13 +104,11 @@ func (t *TableSets) init() {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
-		utils.MariaDB: {
+		utils.Oracle: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
 	}
-	t.TableList = make(map[ownerTable]*ETL)
-
 }
 
 // 当没有参数时, 初始化此参数默认值
@@ -90,10 +144,10 @@ func (t *TableSets) parse(raw *string) error {
 		t.paramPrefix = &result[1]
 	}
 
-	ownerTable := ownerTable{result[3], result[5]}
-	_, ok := t.TableList[ownerTable]
+	ownerTable := ownerTable{ownerValue: ValToUper(result[3]), tableValue: ValToUper(result[5])}
+	_, ok := t.TableBus.tableList[ownerTable]
 	if !ok {
-		t.TableList[ownerTable] = nil
+		t.TableBus.tableList[ownerTable] = nil
 		t.tableListIndex = append(t.tableListIndex, ownerTable)
 	}
 
@@ -106,13 +160,13 @@ func (t *TableSets) parse(raw *string) error {
 		tab := utils.TrimKeySpace(strings.Split(rawText, " "))
 		for i := 0; i < len(tab); i++ {
 			if strings.EqualFold(tab[i], utils.TableType) {
-				t.paramPrefix = &tab[i]
+				t.ParamPrefix = &tab[i]
 			} else {
 				tabVal := strings.Split(tab[i], ".")
 				ownerTable := ownerTable{tabVal[0], tabVal[1]}
-				_, ok := t.TableList[ownerTable]
+				_, ok := t.TableBus[ownerTable]
 				if !ok {
-					t.TableList[ownerTable] = nil
+					t.TableBus[ownerTable] = nil
 					t.tableListIndex = append(t.tableListIndex, ownerTable)
 				}
 
@@ -125,7 +179,7 @@ func (t *TableSets) parse(raw *string) error {
 		return errors.Errorf("%s parameter must end with a semicolon: %s", utils.TableType, *raw)
 	}
 
-	return errors.Errorf("Incorrect %s parameter user(or db) and table name rules: %s", utils.TableType, *raw)*/
+	return errors.Errorf("Incorrect %s parameter user(or db) and table Name rules: %s", utils.TableType, *raw)*/
 }
 
 // 当出现第二次参数进入, 需要进入add动作
@@ -141,10 +195,10 @@ func (t *TableSets) add(raw *string) error {
 	}
 	result = utils.TrimKeySpace(result)
 
-	ownerTable := ownerTable{result[3], result[5]}
-	_, ok := t.TableList[ownerTable]
+	ownerTable := ownerTable{ownerValue: ValToUper(result[3]), tableValue: ValToUper(result[5])}
+	_, ok := t.TableBus.tableList[ownerTable]
 	if !ok {
-		t.TableList[ownerTable] = nil
+		t.TableBus.tableList[ownerTable] = nil
 		t.tableListIndex = append(t.tableListIndex, ownerTable)
 	}
 
@@ -156,13 +210,13 @@ func (t *TableSets) add(raw *string) error {
 		tab := utils.TrimKeySpace(strings.Split(rawText, " "))
 		for i := 0; i < len(tab); i++ {
 			if strings.EqualFold(tab[i], utils.TableType) {
-				t.paramPrefix = &tab[i]
+				t.ParamPrefix = &tab[i]
 			} else {
 				tabVal := strings.Split(tab[i], ".")
 				ownerTable := ownerTable{tabVal[0], tabVal[1]}
-				_, ok := t.TableList[ownerTable]
+				_, ok := t.TableBus[ownerTable]
 				if !ok {
-					t.TableList[ownerTable] = nil
+					t.TableBus[ownerTable] = nil
 					t.tableListIndex = append(t.tableListIndex, ownerTable)
 				}
 
@@ -173,7 +227,7 @@ func (t *TableSets) add(raw *string) error {
 	if ok := strings.HasSuffix(*raw, ";"); !ok {
 		return errors.Errorf("%s parameter must end with a semicolon: %s", utils.TableType, *raw)
 	}
-	return errors.Errorf("Incorrect %s parameter user(or db) and table name rules: %s", utils.TableType, *raw)
+	return errors.Errorf("Incorrect %s parameter user(or db) and table Name rules: %s", utils.TableType, *raw)
 	*/
 	return nil
 }
@@ -182,10 +236,27 @@ type TableSet struct {
 	table *TableSets
 }
 
+func (t *TableSet) MarshalJson() ([]byte, error) {
+	var tjSet []TableJson
+	for table := range t.table.TableBus.tableList {
+		var tj TableJson
+		tj.Type = t.table.paramPrefix
+		tj.Owner = table.ownerValue
+		tj.Table = table.tableValue
+		tjSet = append(tjSet, tj)
+	}
+	tj, err := json.Marshal(tjSet)
+	return tj, err
+}
+
 var TableSetBus TableSet
 
 func (t *TableSet) Init() {
 	t.table = new(TableSets)
+	t.table.TableBus = new(TableList)
+	t.table.TableBus.tableList = make(map[ownerTable]*ETL)
+	t.table.TableBus.schemaTableList = make(map[string]map[string]*string)
+	t.table.TableBus.include = make(map[string]map[string]bool)
 }
 
 func (t *TableSet) Add(raw *string) error {

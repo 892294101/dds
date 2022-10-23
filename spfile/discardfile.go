@@ -1,6 +1,7 @@
 package spfile
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
@@ -14,7 +15,7 @@ type DiscardFile struct {
 }
 
 func (d *DiscardFile) put() string {
-	return fmt.Sprintf("%s %s", *d.paramPrefix, *d.Dir)
+	return fmt.Sprintf("%s %s\n", *d.paramPrefix, *d.Dir)
 }
 
 func (d *DiscardFile) init() {
@@ -23,7 +24,7 @@ func (d *DiscardFile) init() {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
-		utils.MariaDB: {
+		utils.Oracle: {
 			utils.Extract:  utils.Extract,
 			utils.Replicat: utils.Replicat,
 		},
@@ -51,7 +52,7 @@ func (d *DiscardFile) parse(raw *string) error {
 		case strings.EqualFold(discards[i], utils.DiscardFileType):
 			d.paramPrefix = &discards[i]
 			if i+1 > discardLength {
-				return errors.Errorf("%s value must be specified", discards[i])
+				return errors.Errorf("%s Value must be specified", discards[i])
 			}
 			NextVal := &discards[i+1]
 			if utils.KeyCheck(NextVal) {
@@ -77,6 +78,14 @@ func (d *DiscardFile) add(raw *string) error {
 
 type DiscardFileSet struct {
 	discard *DiscardFile
+}
+
+func (d *DiscardFileSet) MarshalJson() ([]byte, error) {
+	var sj DiscardJson
+	sj.Type = d.discard.paramPrefix
+	sj.Dir = d.discard.Dir
+	sjs, err := json.Marshal(sj)
+	return sjs, err
 }
 
 var DiscardFileBus DiscardFileSet

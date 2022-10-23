@@ -1,5 +1,5 @@
 process httk_0001
-sourcedb 10.130.41.234 port 3306  serverid 1002   type mysql userid admin password admin
+sourcedb 10.130.41.246 port 3306  serverid 1002 type mysql userid root password Admin!@123
 --userid 17.19.211.21,17.19.211.22 port 1521 sid httk
 traildir ./data/httk1 size 200 keep 3 day
 discardfile ./discard/httk1
@@ -9,20 +9,10 @@ discardfile ./discard/httk1
 dboptions ignorereplicates suppressiontrigger ignoreforeignkey
 --ignorereplicates getreplicates suppressiontrigger ignoreforeignkey
 
-table httk.test02;
-table httk.test03;
-table httk.test04;
-table httk.test05;
-table httk.test05;
-table httk.test05;
-tableexclude httk.test1;
-tableexclude httk.test2;
-tableexclude httk.test1;
-tableexclude httk.test2;
+table "admin"."admin00*";
 
-
-
-
+--tableexclude "admin"."test0*";
+--tableexclude "admin"."admin001";
 
 
 
