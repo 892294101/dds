@@ -21,7 +21,7 @@ require (
 	github.com/pingcap/tipb v0.0.0-20220704030114-0f4f873beca8 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v2.21.11+incompatible // indirect
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.0
 	github.com/twpayne/go-geom v1.4.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	go.uber.org/goleak v1.1.12 // indirect

@@ -174,7 +174,7 @@ var (
 	DATABASE  = "DATABASE"
 )
 
-//根据执行文件路径获取程序的HOME路径
+// 根据执行文件路径获取程序的HOME路径
 func GetHomeDirectory() (s *string, err error) {
 	file, _ := exec.LookPath(os.Args[0])
 	ExecFilePath, _ := filepath.Abs(file)
@@ -194,7 +194,7 @@ func GetHomeDirectory() (s *string, err error) {
 				}
 			}
 		}
-	case "linux":
+	case "linux", "darwin":
 		execfileslice := strings.Split(ExecFilePath, "/")
 		HomeDirectory := execfileslice[:len(execfileslice)-2]
 		for _, v := range HomeDirectory {
@@ -244,7 +244,7 @@ func KeyCheck(s *string) bool {
 	return ok
 }
 
-//切片转为字符类型
+// 切片转为字符类型
 func SliceToString(kv []string, sp string) *string {
 	var kwsb strings.Builder
 	var kw string
@@ -287,7 +287,7 @@ func ConvertPositionToNumber(pos *mysql.Position) (s *uint64, p *uint64, err err
 	return &fn, &pn, nil
 }
 
-//判断文件是否存在
+// 判断文件是否存在
 func IsFileExist(path string) bool {
 	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
@@ -304,8 +304,8 @@ func PathExists(path string) bool {
 	return false
 }
 
-//=======================================================================================================
-//自定义Panic异常处理,调用方式: 例如Test()函数, 指定defer ErrorCheckOfRecover(Test)
+// =======================================================================================================
+// 自定义Panic异常处理,调用方式: 例如Test()函数, 指定defer ErrorCheckOfRecover(Test)
 func GetFunctionName(i interface{}, seps ...rune) string {
 	u := runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Entry()
 	f, _ := runtime.FuncForPC(reflect.ValueOf(i).Pointer()).FileLine(u)
