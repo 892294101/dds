@@ -36,6 +36,14 @@ func (s *Spfile) init() error {
 		s.mustParams = append(s.mustParams, utils.DiscardFileType)
 		s.mustParams = append(s.mustParams, utils.DBOptionsType)
 		s.mustParams = append(s.mustParams, utils.TableType)
+	// Oracle extract进程必须存在的参数
+	case s.paramBaseInfo.dbType == GetOracleName() && s.paramBaseInfo.processType == GetExtractName():
+		s.mustParams = append(s.mustParams, utils.ProcessType)
+		s.mustParams = append(s.mustParams, utils.UserId)
+		s.mustParams = append(s.mustParams, utils.TrailDirType)
+		s.mustParams = append(s.mustParams, utils.DiscardFileType)
+		s.mustParams = append(s.mustParams, utils.DBOptionsType)
+		s.mustParams = append(s.mustParams, utils.TableType)
 	}
 
 	return nil
@@ -295,7 +303,7 @@ func (s *Spfile) DMLExcludeFilter(owner, table *string) (bool, error) {
 
 // 获取Oracle连接串
 func (s *Spfile) GetOracleDBConnStr() *OdbInfo {
-	return s.paramSet[utils.OUserIDType].GetParam().(*UserId).DBInfo.GetConnInfo()
+	return s.paramSet[utils.OUserIDType].GetParam().(*UserId).DBInfo
 }
 
 // 获取Mysql连接串

@@ -15,7 +15,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	pfile, err := spfile.LoadSpfile(fmt.Sprintf("%s.desc", "HTTK_0002"), spfile.UTF8, log, spfile.GetOracleName(), spfile.GetExtractName())
+	pfile, err := spfile.LoadSpfile(fmt.Sprintf("%s.desc", "HTTK_0001"), spfile.UTF8, log, spfile.GetMySQLName(), spfile.GetExtractName())
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

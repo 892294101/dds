@@ -88,7 +88,26 @@ type SourceDB struct {
 }
 
 func (s *SourceDB) put() string {
-	return fmt.Sprintf("%s %s %s %d %s %s %s %s %s %s %s %d", *s.paramPrefix, *s.DBInfo.address, *s.DBInfo.port.key, *s.DBInfo.port.value, *s.DBInfo.types.key, *s.DBInfo.types.value, *s.DBInfo.userId.key, *s.DBInfo.userId.value, *s.DBInfo.passWord.key, *s.DBInfo.passWord.value, *s.DBInfo.serverId.key, *s.DBInfo.serverId.value)
+	return fmt.Sprintf("%s %s %s %d %s %s %s %s %s %s %s %d %s %s %s %s %s %s\n",
+		*s.paramPrefix,
+		*s.DBInfo.GetAddress(),
+		*s.DBInfo.port.key,
+		*s.DBInfo.GetPort(),
+		*s.DBInfo.types.key,
+		*s.DBInfo.GetTypes(),
+		*s.DBInfo.userId.key,
+		*s.DBInfo.GetUserId(),
+		*s.DBInfo.passWord.key,
+		*s.DBInfo.GetPassWord(),
+		*s.DBInfo.serverId.key,
+		*s.DBInfo.GetServerID(),
+		*s.DBInfo.timeZone.key,
+		s.DBInfo.GetTimeZone().String(),
+		*s.DBInfo.clientCharacter.key,
+		*s.DBInfo.GetClientCharacter(),
+		*s.DBInfo.clientCollation.key,
+		*s.DBInfo.GetClientCollation(),
+	)
 }
 
 // 初始化参数可以支持的数据库和进程
@@ -283,14 +302,14 @@ func (s *SourceDB) parse(raw *string) error {
 				return errors.Errorf("keywords cannot be used: %s", *NextVal)
 			}
 			if s.DBInfo.clientCollation != nil {
-				return errors.Errorf("Parameters cannot be repeated: %s", *NextVal)
+				return errors.Errorf("parameters cannot be repeated: %s", *NextVal)
 			}
 
-			localTime, err := time.LoadLocation("Asia/Shanghai")
+			tm, err := time.LoadLocation(*NextVal)
 			if err != nil {
-				return errors.Errorf("Unknown time zone: ", NextVal)
+				return errors.Errorf("unknown time zone: %v", *NextVal)
 			}
-			s.DBInfo.timeZone = &TimeZone{key: &sdb[i], value: localTime}
+			s.DBInfo.timeZone = &TimeZone{key: &sdb[i], value: tm}
 			i += 1
 		default:
 			return errors.Errorf("unknown keyword: %s", sdb[i])
@@ -307,6 +326,10 @@ func (s *SourceDB) parse(raw *string) error {
 	if s.DBInfo.userId == nil {
 		s.DBInfo.userId = &UserIdModel{key: &utils.UserId, value: &utils.DefaultUserId}
 	}
+	if s.DBInfo.passWord == nil {
+		return errors.Errorf("%s %s must be specified", utils.SourceDBType, utils.PassWord)
+	}
+
 	if s.DBInfo.serverId == nil {
 		return errors.Errorf("%s %s must be specified", utils.SourceDBType, utils.ServerId)
 	}
@@ -315,20 +338,15 @@ func (s *SourceDB) parse(raw *string) error {
 		s.DBInfo.retryMaxConnNumber = &RetryMaxConnect{key: &utils.Retry, value: &utils.DefaultMaxRetryConnect}
 	}
 
-	if s.DBInfo.clientCharacter == nil {
+	if s.DBInfo.clientCharacter == nil && s.DBInfo.clientCollation == nil {
 		s.DBInfo.clientCharacter = &ClientCharacterSet{key: &utils.Character, value: &utils.DefaultClientCharacter}
-	}
-
-	if s.DBInfo.clientCollation == nil {
 		s.DBInfo.clientCollation = &ClientCollation{key: &utils.Collation, value: &utils.DefaultClientCollation}
+	} else {
+		return errors.Errorf("character set and collation must be configured at the same time")
 	}
 
 	if s.DBInfo.timeZone == nil {
 		s.DBInfo.timeZone = &TimeZone{key: &utils.TimeZone, value: utils.DefaultTimeZone}
-	}
-
-	if s.DBInfo.passWord == nil {
-		return errors.Errorf("%s %s must be specified", utils.SourceDBType, utils.PassWord)
 	}
 
 	return nil

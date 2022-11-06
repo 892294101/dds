@@ -77,8 +77,8 @@ type OdbInfo struct {
 	address            *UserIdIpSet              // 数据库地址
 	port               *UserIdPortModel          // 数据库端口
 	userName           *UserIdUserIdModel        // 用户名
-	sid                *UserIdSidModel           // instance id
 	passWord           *UserIdPassWordModel      // 密码
+	sid                *UserIdSidModel           // instance id
 	retryMaxConnNumber *UserIdRetryMaxConnect    // 连接重连最大次数
 	clientCharacter    *UserIdClientCharacterSet // 客户端字符集
 	timeZone           *UserIdTimeZone           // 时区
@@ -107,6 +107,34 @@ func (u *OdbInfo) GetHostAddress() []string {
 	return u.address.value
 }
 
+func (u *OdbInfo) GetPort() uint16 {
+	return *u.port.value
+}
+
+func (u *OdbInfo) GetUserName() string {
+	return *u.userName.value
+}
+
+func (u *OdbInfo) GetPassWord() string {
+	return *u.passWord.value
+}
+
+func (u *OdbInfo) GetSID() string {
+	return *u.sid.value
+}
+
+func (u *OdbInfo) GetRetryMaxConnNumber() int {
+	return *u.retryMaxConnNumber.value
+}
+
+func (u *OdbInfo) GetClientCharacter() string {
+	return *u.clientCharacter.value
+}
+
+func (u *OdbInfo) GetTimeZone() string {
+	return *u.timeZone.value
+}
+
 type UserId struct {
 	supportParams map[string]map[string]string `json:"_"`           // 参数支持吃数据库和进程
 	ParamPrefix   *string                      `json:"PARAMS_TYPE"` // 参数前缀
@@ -133,10 +161,14 @@ func (u *UserId) put() string {
 	return fmt.Sprintf("%s %s@%s %s %d %s %s %s %s %s %s\n", *u.ParamPrefix,
 		*u.DBInfo.userName.value,
 		*utils.SliceToString(u.DBInfo.address.value, ","),
-		*u.DBInfo.port.key, *u.DBInfo.port.value,
-		*u.DBInfo.passWord.key, *u.DBInfo.passWord.value,
-		*u.DBInfo.clientCharacter.key, *u.DBInfo.clientCharacter.value,
-		*u.DBInfo.timeZone.key, *u.DBInfo.timeZone.value)
+		*u.DBInfo.port.key,
+		*u.DBInfo.port.value,
+		*u.DBInfo.passWord.key,
+		*u.DBInfo.passWord.value,
+		*u.DBInfo.clientCharacter.key,
+		*u.DBInfo.clientCharacter.value,
+		*u.DBInfo.timeZone.key,
+		*u.DBInfo.timeZone.value)
 }
 
 func (u *UserId) isType(raw *string, dbType *string, processType *string) error {

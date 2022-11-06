@@ -89,7 +89,7 @@ func (t *TableSets) put() string {
 			if i > 0 {
 				msg += fmt.Sprintf("\n")
 			}
-			msg += fmt.Sprintf("%s %s.%s", *t.paramPrefix, index.ownerValue, index.tableValue)
+			msg += fmt.Sprintf("%s %s.%s;", *t.paramPrefix, index.ownerValue, index.tableValue)
 		}
 
 	}

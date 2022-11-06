@@ -8,9 +8,11 @@ require (
 	github.com/892294101/go-mysql v1.2.3
 	github.com/892294101/parser v0.0.0-20220705174247-7e3b2232c99f
 	github.com/edsrzf/mmap-go v1.1.0 // indirect
+	github.com/godror/godror v0.34.0 // indirect
 	github.com/golang/snappy v0.0.4
 	github.com/google/pprof v0.0.0-20220816150559-e6338cec2015 // indirect
 	github.com/grandecola/mmap v0.6.0 // indirect
+	github.com/jiunx/xsqlparser v1.0.0 // indirect
 	github.com/kevinu2/shm v0.0.0-20210812064403-0c4d9413f5fa // indirect
 	github.com/mattn/go-sqlite3 v1.14.14
 	github.com/paulmach/go.geo v0.0.0-20180829195134-22b514266d33 // indirect

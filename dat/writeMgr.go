@@ -22,43 +22,36 @@ func (w *WriteCache) Init(s *spfile.Spfile, dbType *string, mdh metadata.MetaDat
 	w.MaxSize = *trail.GetSizeValue() * 1024 * 1024
 	w.md = mdh
 	w.log = log
-	switch *dbType {
-	case spfile.GetMySQLName():
-		w.log.Debugf("Get the program home directory")
-		home, err := utils.GetHomeDirectory()
-		if err != nil {
-			return err
+	w.log.Debugf("Get the program home directory")
+	home, err := utils.GetHomeDirectory()
+	if err != nil {
+		return err
+	}
+	w.log.Debugf("program home directory %v", *home)
+	w.ProcName = *s.GetProcessName()
+	dir := *trail.GetDir()
+	ok := strings.HasPrefix(dir, "./")
+	if ok {
+		ind := strings.LastIndex(dir, "/")
+		if ind == -1 {
+			return errors.Errorf("Trail directory extraction error: %s", dir)
 		}
-		w.log.Debugf("program home directory %v", *home)
-		w.ProcName = *s.GetProcessName()
-		dir := *trail.GetDir()
-		ok := strings.HasPrefix(dir, "./")
+		w.DatDir = path.Join(*home, dir[:ind])
+		w.Prefix = dir[ind+1:]
+	} else {
+		ok := strings.HasPrefix(dir, "/")
 		if ok {
 			ind := strings.LastIndex(dir, "/")
 			if ind == -1 {
 				return errors.Errorf("Trail directory extraction error: %s", dir)
 			}
-			w.DatDir = path.Join(*home, dir[:ind])
+			w.DatDir = dir[:ind]
 			w.Prefix = dir[ind+1:]
-		} else {
-			ok := strings.HasPrefix(dir, "/")
-			if ok {
-				ind := strings.LastIndex(dir, "/")
-				if ind == -1 {
-					return errors.Errorf("Trail directory extraction error: %s", dir)
-				}
-				w.DatDir = dir[:ind]
-				w.Prefix = dir[ind+1:]
-			}
 		}
+	}
 
-		if len(w.DatDir) == 0 || len(w.Prefix) == 0 {
-			return errors.Errorf("Failed to load trail directory when loading writer: %s", dir)
-		}
-
-	case spfile.GetOracleName():
-	default:
-		return errors.Errorf("The writer does not support this database type to initialize data: %s", *dbType)
+	if len(w.DatDir) == 0 || len(w.Prefix) == 0 {
+		return errors.Errorf("Failed to load trail directory when loading writer: %s", dir)
 	}
 
 	return nil
@@ -124,16 +117,16 @@ func (w *WriteCache) WriteFileBeginMark() error {
 	var dfs serialize.Serialize
 
 	dfs = &serialize.FileMarkV1{}
-	b, err := dfs.Encode(&serialize.FileMark{WriteMark: serialize.FileBegin, WriteTime: uint64(time.Now().UnixNano())},false)
+	b, err := dfs.Encode(&serialize.FileMark{WriteMark: serialize.FileBegin, WriteTime: uint64(time.Now().UnixNano())}, false)
 	if err != nil {
 		return errors.Errorf("Error writing header information of file: %v", err)
 	}
 
-	if err := w.WriteOffset(uint64(len(b))); err != nil {
+	if err := w.writeOffset(uint64(len(b))); err != nil {
 		return err
 	}
 
-	if err := w.WriteData(b); err != nil {
+	if err := w.writeData(b); err != nil {
 		return err
 	}
 	w.log.Debugf("file begin flag size %v", len(b)+8)
@@ -144,16 +137,16 @@ func (w *WriteCache) WriteFileEndMark() error {
 	w.log.Debugf("write file end flag")
 	var dfs serialize.Serialize
 	dfs = &serialize.FileMarkV1{}
-	b, err := dfs.Encode(&serialize.FileMark{WriteMark: serialize.FileEnd, WriteTime: uint64(time.Now().UnixNano())},false)
+	b, err := dfs.Encode(&serialize.FileMark{WriteMark: serialize.FileEnd, WriteTime: uint64(time.Now().UnixNano())}, false)
 	if err != nil {
 		return errors.Errorf("Error writing header information of file: %s", err)
 	}
 
-	if err := w.WriteOffset(uint64(len(b))); err != nil {
+	if err := w.writeOffset(uint64(len(b))); err != nil {
 		return err
 	}
 
-	if err := w.WriteData(b); err != nil {
+	if err := w.writeData(b); err != nil {
 		return err
 	}
 
@@ -162,7 +155,7 @@ func (w *WriteCache) WriteFileEndMark() error {
 }
 
 // 写入数据偏移
-func (w *WriteCache) WriteOffset(offset uint64) error {
+func (w *WriteCache) writeOffset(offset uint64) error {
 	w.Dirty = true
 	w.lock.Lock()
 	defer w.lock.Unlock()
@@ -177,7 +170,7 @@ func (w *WriteCache) WriteOffset(offset uint64) error {
 }
 
 // 写入数据
-func (w *WriteCache) WriteData(b []byte) error {
+func (w *WriteCache) writeData(b []byte) error {
 	w.Dirty = true
 	w.lock.Lock()
 	defer w.lock.Unlock()
@@ -250,11 +243,11 @@ func (w *WriteCache) Write(b []byte) error {
 	if err := w.CheckFull(b); err != nil {
 		return err
 	}
-	if err := w.WriteOffset(uint64(len(b))); err != nil {
+	if err := w.writeOffset(uint64(len(b))); err != nil {
 		return err
 	}
 
-	if err := w.WriteData(b); err != nil {
+	if err := w.writeData(b); err != nil {
 		return err
 	}
 

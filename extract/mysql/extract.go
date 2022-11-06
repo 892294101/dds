@@ -87,7 +87,7 @@ func (e *ExtractEvent) setSourceDB() error {
 		e.replicationStream.SetRetryConnectNum(mstr.GetRetryConnect())
 		e.replicationStream.SetCharacter(mstr.GetClientCharacter())
 		e.replicationStream.SetTimeZone(mstr.GetTimeZone())
-		e.replicationStream.SetHeartbeatPeriod(time.Second * 30)
+		e.replicationStream.SetHeartbeatPeriod(time.Second * 60)
 		e.replicationStream.SetUseDecimal(true)
 		e.replicationStream.SetParseTime(true)
 		//e.replicationStream.SetSyncAck(true)

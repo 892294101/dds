@@ -317,7 +317,7 @@ var GlobalProcessID string
 func ErrorCheckOfRecover(n interface{}, log *logrus.Logger) {
 	if err := recover(); err != nil {
 		home, _ := GetHomeDirectory()
-		if home != nil {
+		if home != nil && len(GlobalProcessID) > 0 {
 			_ = os.Remove(filepath.Join(*home, "pcs", GlobalProcessID))
 		}
 		log.Errorf("Panic Message: %s", err)

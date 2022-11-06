@@ -9,9 +9,7 @@ import (
 	"time"
 )
 
-var HeadByte uint64 = 0
-
-// 写入文件管理
+// WriteCache 写入文件管理
 type WriteCache struct {
 	ProcName        string // 进程名称
 	DatDir          string // 数据目录
@@ -31,4 +29,15 @@ type WriteCache struct {
 	wg              sync.WaitGroup
 	flushPeriodTime time.Duration
 	Dirty           bool
+}
+
+// ReadCache 写入文件管理
+type ReadCache struct {
+	DatDir      string // 数据目录
+	Prefix      string // 文件前缀
+	pfile       *spfile.Spfile
+	file        *mmap.File
+	Seq         uint64
+	Rba         uint64
+	CurrentFile string
 }

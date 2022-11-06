@@ -33,7 +33,6 @@ type ETL struct {
 	mapColumn    string
 }
 
-
 func GetMySQLName() string {
 	return utils.MySQL
 }
@@ -50,10 +49,6 @@ func GetReplicationName() string {
 	return utils.Replicat
 }
 
-func GetDBOptionsName() string {
-	return utils.DBOptionsType
-}
-
 func ValToUper(v string) string {
 	if strings.HasPrefix(v, `"`) && strings.HasSuffix(v, `"`) {
 		return strings.Trim(v, `"`)
@@ -61,7 +56,7 @@ func ValToUper(v string) string {
 	return strings.ToUpper(strings.Trim(v, `"`))
 }
 
-func MatchSchemaTable(owner, table, val *string, log *logrus.Logger, ) bool {
+func MatchSchemaTable(owner, table, val *string, log *logrus.Logger) bool {
 	switch {
 	case strings.HasSuffix(*val, "*") && !strings.HasPrefix(*val, "*"): // 检查*号是否在结尾,头部不可以有星号
 		re, err := regexp.Compile(fmt.Sprintf("^(%v)", strings.TrimRight(*val, "*")))

@@ -1,0 +1,48 @@
+package dat
+
+import (
+	"github.com/892294101/dds/spfile"
+	"github.com/892294101/dds/utils"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"path"
+	"strings"
+)
+
+func (w *ReadCache) Init(s *spfile.Spfile, log *logrus.Logger) error {
+	trail := s.GetTrail()
+
+	w.ProcName = *s.GetProcessName()
+
+	home, err := utils.GetHomeDirectory()
+	if err != nil {
+		return err
+	}
+
+	dir := *trail.GetDir()
+	ok := strings.HasPrefix(dir, "./")
+	if ok {
+		ind := strings.LastIndex(dir, "/")
+		if ind == -1 {
+			return errors.Errorf("Trail directory extraction error: %s", dir)
+		}
+		w.DatDir = path.Join(*home, dir[:ind])
+		w.Prefix = dir[ind+1:]
+	} else {
+		ok := strings.HasPrefix(dir, "/")
+		if ok {
+			ind := strings.LastIndex(dir, "/")
+			if ind == -1 {
+				return errors.Errorf("Trail directory extraction error: %s", dir)
+			}
+			w.DatDir = dir[:ind]
+			w.Prefix = dir[ind+1:]
+		}
+	}
+
+	if len(w.DatDir) == 0 || len(w.Prefix) == 0 {
+		return errors.Errorf("Failed to load trail directory when loading writer: %s", dir)
+	}
+
+	return nil
+}
