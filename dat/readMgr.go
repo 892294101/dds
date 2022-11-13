@@ -1,14 +1,6 @@
 package dat
 
-import (
-	"github.com/892294101/dds/spfile"
-	"github.com/892294101/dds/utils"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
-	"path"
-	"strings"
-)
-
+/*
 func (w *ReadCache) Init(s *spfile.Spfile, log *logrus.Logger) error {
 	trail := s.GetTrail()
 
@@ -46,3 +38,4 @@ func (w *ReadCache) Init(s *spfile.Spfile, log *logrus.Logger) error {
 
 	return nil
 }
+*/
