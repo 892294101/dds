@@ -63,7 +63,7 @@ type LibSys struct {
 	Command string
 }
 
-//根据执行文件路径获取程序的HOME路径
+// 根据执行文件路径获取程序的HOME路径
 func GetHomeDir() (homeDir string) {
 	file, _ := exec.LookPath(os.Args[0])
 	ExecFilePath, _ := filepath.Abs(file)
@@ -82,7 +82,7 @@ func GetHomeDir() (homeDir string) {
 				}
 			}
 		}
-	case "linux":
+	case "linux", "darwin":
 		execFileSlice := strings.Split(ExecFilePath, "/")
 		HomeDirectory := execFileSlice[:len(execFileSlice)-2]
 		for _, v := range HomeDirectory {
@@ -134,7 +134,7 @@ func GetPrompt(ctx context.Context) string {
 	return prompt
 }
 
-//切片转为字符类型
+// 切片转为字符类型
 func SliceToString(kv []string) *string {
 	var kwsb strings.Builder
 	var kw string

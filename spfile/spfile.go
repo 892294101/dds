@@ -196,10 +196,11 @@ func (s *Spfile) LoadToDatabase() error {
 		}
 		data = append(data, string(res))
 	}
+	// 加载参数到db文件
 	return s.confserver.LoadJsonToServerConfig(data, s.GetProcessName())
 }
 
-//第一次出现的参数解析
+// 第一次出现的参数解析
 func (s *Spfile) firstParams(pro Parameters, params *string) error {
 	for Type, rawData := range pro.Registry() {
 		if err := rawData.isType(params, &s.paramBaseInfo.dbType, &s.paramBaseInfo.processType); err != nil {

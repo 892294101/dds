@@ -1,6 +1,8 @@
 package interactive
 
 import (
+	"github.com/892294101/dds/utils"
+	"github.com/sirupsen/logrus"
 	"os/exec"
 	"time"
 
@@ -18,7 +20,7 @@ func NewForkProcess() *ForkProcess {
 	return new(ForkProcess)
 }
 
-func (f *ForkProcess) InitFork(execDir string, args0 string, args []string) error {
+func (f *ForkProcess) InitFork(execDir string, args0 string, args []string, log *logrus.Logger) error {
 	f.dir = execDir
 	f.args0 = args0
 	f.args = args
@@ -26,7 +28,7 @@ func (f *ForkProcess) InitFork(execDir string, args0 string, args []string) erro
 	return nil
 }
 
-func (f *ForkProcess) Start() (int, error) {
+func (f *ForkProcess) Start(log *logrus.Logger) (int, error) {
 	binaryFile := filepath.Join(f.dir, "bin", f.args0)
 	/*	p, err := os.StartProcess(binaryFile, f.args, &os.ProcAttr{Dir: path.Join(f.dir),
 		Env: append(os.Environ(), f.args...),
@@ -60,6 +62,7 @@ func (f *ForkProcess) Start() (int, error) {
 		c.Wait()
 	}(cmd)
 
+	log.Infof("receive cli command: %v %v", binaryFile, *utils.SliceToString(f.args, ""))
 	if cmd.Process == nil {
 		count := 0
 		for {

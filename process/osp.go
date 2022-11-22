@@ -27,7 +27,7 @@ func WriteProcessInfo(pfile *spfile.Spfile, proType string, rpcPort int) error {
 		return errors.Errorf("error writing process group information because process file information already exists")
 	}
 
-	hand, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_SYNC, 640)
+	hand, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_SYNC, 775)
 	if err != nil {
 		return errors.Errorf("open file failed the WriteProcessInfo: %v", err)
 	}

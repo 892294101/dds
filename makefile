@@ -5,7 +5,7 @@ BUILD_DIR=./build
 BINARY_DIR=$(BUILD_DIR)/bin
 
 MYSQL_EXTRACT_FILE=$(BINARY_DIR)/mysqlextract
-MYSQL_EXTRACT_SRC=./test/mysqlextract.go
+MYSQL_EXTRACT_SRC=./test/mysqlextract/mysqlextract.go
 
 
 .PHONY: all clean build

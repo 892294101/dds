@@ -1,12 +1,7 @@
 package main
 
-import (
-	"fmt"
-	rpc "github.com/892294101/dds/grpc"
-)
-
 func main() {
-	c, err := rpc.NewRpcClient()
+	/*c, err := rpc.NewRpcClient()
 
 	if err != nil {
 		fmt.Println("NewRpc error", err)
@@ -15,5 +10,5 @@ func main() {
 	if err != nil {
 		fmt.Println("Stop error", err)
 
-	}
+	}*/
 }

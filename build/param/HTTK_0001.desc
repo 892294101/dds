@@ -1,0 +1,18 @@
+process httk_0001
+sourcedb 10.130.41.246 port 3306  serverid 1002 type mysql userid root password Admin!@123
+--userid 17.19.211.21,17.19.211.22 port 1521 sid httk
+traildir ./data/httk1 size 200 keep 3 day
+discardfile ./discard/httk1
+--ddl include objname httk.*
+--setenv(sessioncharset=utf8)
+--sqlexec(set time_zone = '+8:00';)
+dboptions ignorereplicates suppressiontrigger ignoreforeignkey
+--ignorereplicates getreplicates suppressiontrigger ignoreforeignkey
+
+table "admin"."admin00*";
+
+--tableexclude "admin"."test0*";
+--tableexclude "admin"."admin001";
+
+
+

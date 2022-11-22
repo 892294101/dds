@@ -1,0 +1,3 @@
+#!/bin/bash
+dirHome=$(cd $(dirname $(dirname $0) ); pwd)
+$dirHome/jdk/bin/java -jar -DProcessName=$1 $dirHome/lib/jydata-main.jar 0

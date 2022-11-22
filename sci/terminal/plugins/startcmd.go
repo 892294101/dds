@@ -106,6 +106,9 @@ func (t unifiedStartCmd) Exec(ctx context.Context, args []string, sgl chan os.Si
 	var proType string
 	var exist bool
 
+	// 提前验证Oracle参数文件
+	log := ctx.Value(api.LogWrite).(*logrus.Logger)
+
 	for _, processInfo := range info {
 		if strings.EqualFold(processInfo.Groups.GroupID, args[1]) {
 			if processInfo.Process != nil {
@@ -122,8 +125,6 @@ func (t unifiedStartCmd) Exec(ctx context.Context, args []string, sgl chan os.Si
 				binaryFile = "oracleextract"
 				proType = spfile.GetOracleName()
 
-				// 提前验证Oracle参数文件
-				log := ctx.Value(api.LogWrite).(*logrus.Logger)
 				pfile, err := spfile.LoadSpfile(fmt.Sprintf("%s.desc", strings.ToUpper(args[1])), spfile.UTF8, log, processInfo.Groups.DbType, processInfo.Groups.ProcessType)
 				if err != nil {
 					return ctx, err
@@ -166,16 +167,16 @@ func (t unifiedStartCmd) Exec(ctx context.Context, args []string, sgl chan os.Si
 
 	switch proType {
 	case spfile.GetMySQLName():
-		err = fp.InitFork(execDir, binaryFile, []string{"-processid", args[1]})
+		err = fp.InitFork(execDir, binaryFile, []string{"-processid", args[1]}, log)
 	case spfile.GetOracleName():
-		err = fp.InitFork(execDir, binaryFile, []string{args[1]})
+		err = fp.InitFork(execDir, binaryFile, []string{args[1]}, log)
 	}
 
 	if err != nil {
 		return ctx, err
 	}
 
-	_, err = fp.Start()
+	_, err = fp.Start(log)
 	if err != nil {
 		return ctx, fmt.Errorf("fork process failed: %v\n", err.Error())
 	}
