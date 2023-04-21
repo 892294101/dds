@@ -1,6 +1,5 @@
 process httk_0002
---sourcedb 10.130.41.234 port 3306  serverid 1002   type mysql userid admin password admin
-userid system@10.130.41.7 port 1521 sid app password oracle retry 3 character american_america.zhs16gbk timezone utc
+userid system@10.130.41.21,10.130.41.21 port 1521 sid httk password oracle retry 3 character american_america.zhs16gbk timezone utc
 traildir ./data/httk2 size 200 keep 3 day
 discardfile ./discard/httk2
 ddl include objname httk.*   objtype "table,index"

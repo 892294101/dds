@@ -641,3 +641,24 @@ func CheckPcsFile(p string) (bool, error) {
 	}
 	return IsFileExist(filepath.Join(*dir, "pcs", strings.ToUpper(p))), nil
 }
+
+func ParseNLSLANG(p string) (language, territory, charset string, err error) {
+	if len(p) == 0 {
+		return "", "", "", errors.Errorf("parse NLS_ LANG failed. the cannot be empty")
+	}
+	res := strings.Split(strings.ToUpper(p), ".")
+	if len(res) == 2 {
+		r := strings.Split(res[0], "_")
+		if len(r) == 2 {
+			language = r[0]
+			language = r[1]
+			charset = res[1]
+		} else {
+			return "", "", "", errors.Errorf("NLS_LANG Incorrect format: %v", p)
+		}
+	} else {
+		return "", "", "", errors.Errorf("NLS_LANG Incorrect format: %v", p)
+	}
+
+	return language, territory, charset, nil
+}

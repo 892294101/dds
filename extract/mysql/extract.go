@@ -46,7 +46,7 @@ type ExtractEvent struct {
 	stopSrv           *StopService                // 停止进程服务
 	isReady           bool                        // 是否准备好检索数据
 	rpcPort           int                         //  rpc 端口
-	TranHead          *TranHeadFilter                // 数据过滤
+	TranHead          *TranHeadFilter             // 数据过滤
 }
 
 func (s *Synchronizer) SetSyncHost(host *string, port *uint16) {
@@ -144,11 +144,12 @@ func (e *ExtractEvent) readPfile(processName string, dataBaseType string, proces
 	if err := pfile.Production(); err != nil {
 		return err
 	}
-	// 生成的参数转为json格式，并加载到sqlite数据库，供其它进程调用
-	if err := pfile.LoadToDatabase(); err != nil {
-		return err
-	}
-
+	/*
+		// 生成的参数转为json格式，并加载到sqlite数据库，供其它进程调用
+		if err := pfile.LoadToDatabase(); err != nil {
+			return err
+		}
+	*/
 	if !strings.EqualFold(*pfile.GetProcessName(), processName) {
 		return errors.Errorf("Process name mismatch: %s", *pfile.GetProcessName())
 	}
