@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/892294101/dds/dbs/sci/terminal/api"
 	"os"
-	"github.com/892294101/dds/sci/terminal/api"
 )
 
 type killExtractCmd string

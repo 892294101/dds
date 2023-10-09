@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/892294101/dds/sci/terminal"
+	"github.com/892294101/dds/dbs/sci/terminal"
 
 	"os"
 )

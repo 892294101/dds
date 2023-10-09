@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/892294101/dds/sci/terminal/api"
-	"github.com/892294101/dds/sci/terminal/interactive"
-	"github.com/892294101/dds/utils"
+	"github.com/892294101/dds/dbs/sci/terminal/api"
+	"github.com/892294101/dds/dbs/sci/terminal/interactive"
+	"github.com/892294101/dds/dbs/utils"
 	"github.com/pkg/errors"
 	"io"
 	"os"
@@ -52,7 +52,6 @@ func (t infoExtractCmd) LongDesc() string {
 }
 func (t infoExtractCmd) Exec(ctx context.Context, args []string, sgl chan os.Signal) (context.Context, error) {
 
-
 	return ctx, nil
 }
 
@@ -90,9 +89,6 @@ func (t infoTransmitCmd) LongDesc() string {
 	return t.ShortDesc()
 }
 func (t infoTransmitCmd) Exec(ctx context.Context, args []string, sgl chan os.Signal) (context.Context, error) {
-
-
-
 
 	return ctx, nil
 }
@@ -136,7 +132,6 @@ func (t unifiedInfoCmd) Exec(ctx context.Context, args []string, sgl chan os.Sig
 		return ctx, errors.Errorf("process group does not exist\n")
 	}
 
-
 	detail, err := body.Detail(pi)
 	if err != nil {
 		return nil, err
@@ -144,7 +139,6 @@ func (t unifiedInfoCmd) Exec(ctx context.Context, args []string, sgl chan os.Sig
 	_, _ = fmt.Fprintf(ctx.Value(api.ShellStdout).(io.Writer), "%v\n", *detail)
 	return ctx, nil
 }
-
 
 // command module
 type infoAllCmds struct{}

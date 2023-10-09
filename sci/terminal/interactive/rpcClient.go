@@ -2,9 +2,9 @@ package interactive
 
 import (
 	"fmt"
-	"github.com/892294101/dds/metadata"
-	"github.com/892294101/dds/sci/terminal/api"
-	"github.com/892294101/dds/utils"
+	"github.com/892294101/dds/dbs/metadata"
+	"github.com/892294101/dds/dbs/sci/terminal/api"
+	"github.com/892294101/dds/dbs/utils"
 	"github.com/892294101/ddsrpc"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
