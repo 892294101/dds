@@ -3,7 +3,7 @@ package connect
 import (
 	"database/sql"
 	"fmt"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds/utils"
 	"github.com/godror/godror"
 	"github.com/sirupsen/logrus"
 	"time"
