@@ -12,7 +12,6 @@ require (
 	github.com/grandecola/mmap v0.6.0
 	github.com/mattn/go-sqlite3 v1.14.14
 	github.com/pkg/errors v0.9.1
-	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/sirupsen/logrus v1.9.0
 	google.golang.org/grpc v1.51.0
 )

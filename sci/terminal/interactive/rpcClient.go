@@ -2,12 +2,13 @@ package interactive
 
 import (
 	"fmt"
-	"github.com/892294101/dds/dbs/metadata"
-	"github.com/892294101/dds/dbs/sci/terminal/api"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds/metadata"
+	"github.com/892294101/dds/sci/terminal/api"
+	"github.com/892294101/dds/utils"
 	"github.com/892294101/ddsrpc"
-	"github.com/pkg/errors"
+	"github.com/pingcap/errors"
 	"github.com/sirupsen/logrus"
+
 	"path"
 	"path/filepath"
 	"strconv"
@@ -111,6 +112,7 @@ func (i *InfoDetailStatistics) Set(detail *InfoDetail) {
 type Processor struct {
 	// RPC *ddsrpc.RpcClient // Communication body
 	MD metadata.MetaData // 进程元数据
+	metadata.
 }
 
 type RpcBody struct {

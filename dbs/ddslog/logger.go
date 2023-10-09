@@ -2,7 +2,7 @@ package ddslog
 
 import (
 	"fmt"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds/utils"
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"

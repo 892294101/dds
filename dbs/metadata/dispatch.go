@@ -2,7 +2,7 @@ package metadata
 
 import (
 	"encoding/binary"
-	"github.com/892294101/dds/dbs/spfile"
+	"github.com/892294101/dds/spfile"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"sync"
@@ -334,7 +334,7 @@ func (m *MySQLMdExtConsole) SetDataBaseType(r string) error {
 	default:
 		return errors.Errorf("MySQLMdExtConsole %v", UnknownDT)
 	}
-
+	spfile.GetExtractName()
 	return nil
 }
 

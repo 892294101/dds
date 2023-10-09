@@ -3,8 +3,8 @@ package metadata
 import (
 	"fmt"
 	"github.com/892294101/cache-mmap/mmap"
-	"github.com/892294101/dds/dbs/spfile"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds/spfile"
+	"github.com/892294101/dds/utils"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"os"
