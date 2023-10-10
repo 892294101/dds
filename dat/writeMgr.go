@@ -4,10 +4,10 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/892294101/cache-mmap/mmap"
-	"github.com/892294101/dds/dbs/metadata"
-	"github.com/892294101/dds/dbs/serialize"
-	"github.com/892294101/dds/dbs/spfile"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds-metadata"
+	"github.com/892294101/dds-spfile"
+	"github.com/892294101/dds-utils"
+	"github.com/892294101/dds/serialize"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -17,13 +17,13 @@ import (
 	"time"
 )
 
-func (w *WriteCache) Init(s *spfile.Spfile, dbType *string, mdh metadata.MetaData, log *logrus.Logger) error {
+func (w *WriteCache) Init(s *dds_spfile.Spfile, dbType *string, mdh dds_metadata.MetaData, log *logrus.Logger) error {
 	trail := s.GetTrail()
 	w.MaxSize = *trail.GetSizeValue() * 1024 * 1024
 	w.md = mdh
 	w.log = log
 	w.log.Debugf("Get the program home directory")
-	home, err := utils.GetHomeDirectory()
+	home, err := dds_utils.GetHomeDirectory()
 	if err != nil {
 		return err
 	}
@@ -203,11 +203,11 @@ func (w *WriteCache) LoadDatFile() error {
 	w.flushPeriodTime = time.Second
 	if (fn != nil && rba != nil) && (*fn == 0 && *rba == 0) {
 		w.CurrentFile = filepath.Join(w.DatDir, fmt.Sprintf("%s%09d", w.Prefix, *fn))
-		if !utils.PathExists(w.DatDir) {
+		if !dds_utils.PathExists(w.DatDir) {
 			return errors.Errorf("directory does not exist: %s", w.CurrentFile)
 		}
 
-		if utils.IsFileExist(w.CurrentFile) {
+		if dds_utils.IsFileExist(w.CurrentFile) {
 			return errors.Errorf("file already exists: %s", w.CurrentFile)
 		} else {
 			if err := w.CreateDatFile(); err != nil {

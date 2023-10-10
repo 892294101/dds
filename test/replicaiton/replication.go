@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/892294101/dds/dbs/ddslog"
+	"github.com/892294101/dds/ddslog"
 	"github.com/892294101/go-mysql/mysql"
 	"github.com/892294101/go-mysql/replication"
 	"os"

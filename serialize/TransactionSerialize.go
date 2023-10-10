@@ -3,7 +3,7 @@ package serialize
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds-utils"
 	"github.com/892294101/go-mysql/mysql"
 	"github.com/892294101/go-mysql/replication"
 	"github.com/golang/snappy"
@@ -47,7 +47,7 @@ func (t *TransactionV1) Init(v *TransactionEvent) error {
 		t.Xid = &DefaultXid
 	}
 	t.TransType = uint8(v.TransType)
-	f, p, err := utils.ConvertPositionToNumber(v.Pos)
+	f, p, err := dds_utils.ConvertPositionToNumber(v.Pos)
 	if err != nil {
 		return err
 	}
@@ -85,8 +85,8 @@ func (t *TransactionV1) EncodeTransaction(Buffer *bytes.Buffer) error {
 }
 
 func (t *TransactionV1) EncodeData() ([]byte, error) {
-	Buffer := utils.DataRowsBufferGet()
-	defer utils.DataRowsBufferPut(Buffer)
+	Buffer := dds_utils.DataRowsBufferGet()
+	defer dds_utils.DataRowsBufferPut(Buffer)
 
 	if err := t.EncodeTransaction(Buffer); err != nil {
 		return nil, err

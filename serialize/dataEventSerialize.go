@@ -2,7 +2,7 @@ package serialize
 
 import (
 	"encoding/binary"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds-utils"
 	"github.com/892294101/go-mysql/canal"
 	"github.com/golang/snappy"
 	"github.com/pkg/errors"
@@ -35,8 +35,8 @@ func (d *DataEventV1) InitBuffer() error {
 }
 
 func (d *DataEventV1) EncodeData() ([]byte, error) {
-	Buffer := utils.DataRowsBufferGet()
-	defer utils.DataRowsBufferPut(Buffer)
+	Buffer := dds_utils.DataRowsBufferGet()
+	defer dds_utils.DataRowsBufferPut(Buffer)
 
 	if err := binary.Write(Buffer, binary.LittleEndian, DATA_ROW_HEAD); err != nil {
 		return nil, errors.Errorf("DATA_ROW_HEAD binary write error: %v", err)

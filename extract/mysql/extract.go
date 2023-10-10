@@ -2,13 +2,13 @@ package oramysql
 
 import (
 	"fmt"
-	"github.com/892294101/dds/dbs/dat"
-	"github.com/892294101/dds/dbs/ddslog"
-	"github.com/892294101/dds/dbs/metadata"
-	"github.com/892294101/dds/dbs/process"
-	"github.com/892294101/dds/dbs/serialize"
-	"github.com/892294101/dds/dbs/spfile"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds-metadata"
+	"github.com/892294101/dds-spfile"
+	"github.com/892294101/dds-utils"
+	"github.com/892294101/dds/dat"
+	"github.com/892294101/dds/ddslog"
+	"github.com/892294101/dds/process"
+	"github.com/892294101/dds/serialize"
 	"github.com/892294101/go-mysql/canal"
 	"github.com/892294101/go-mysql/client"
 	"github.com/892294101/go-mysql/mysql"
@@ -36,10 +36,10 @@ type StopService struct {
 type ExtractEvent struct {
 	proName           *string                     // 进程名字
 	replicationStream *Synchronizer               // 复制流
-	pFile             *spfile.Spfile              // 参数文件
+	pFile             *dds_spfile.Spfile          // 参数文件
 	log               *logrus.Logger              // 日志记录器
 	client            *client.Conn                // 备用连接
-	md                metadata.MetaData           // 元数据文件
+	md                dds_metadata.MetaData       // 元数据文件
 	fileWrite         *dat.WriteCache             // 缓存数据写入
 	serialize         map[int]serialize.Serialize // 序列化接口
 	rpcServer         *RpcProcess                 // rpc服务器
@@ -104,7 +104,7 @@ func (e *ExtractEvent) setSourceDB() error {
 		e.client = conn
 		return nil
 	}
-	return errors.Errorf("Failed to get %s info", utils.SourceDBType)
+	return errors.Errorf("Failed to get %s info", dds_utils.SourceDBType)
 }
 
 func (e *ExtractEvent) setLogger(log *logrus.Logger) error {
@@ -116,7 +116,7 @@ func (e *ExtractEvent) setLogger(log *logrus.Logger) error {
 	}
 }
 
-func (e *ExtractEvent) setSpfile(pfile *spfile.Spfile) error {
+func (e *ExtractEvent) setSpfile(pfile *dds_spfile.Spfile) error {
 	if pfile == nil {
 		return errors.Errorf("The Spfile pointer is null")
 	} else {
@@ -127,7 +127,7 @@ func (e *ExtractEvent) setSpfile(pfile *spfile.Spfile) error {
 
 // 打开检查点元数据文件
 func (e *ExtractEvent) initMetaData(processName string, dataBaseType string, processType string, log *logrus.Logger) error {
-	mds, err := metadata.InitMetaData(processName, dataBaseType, processType, log, metadata.LOAD)
+	mds, err := dds_metadata.InitMetaData(processName, dataBaseType, processType, log, dds_metadata.LOAD)
 	if err != nil {
 		return err
 	}
@@ -136,7 +136,7 @@ func (e *ExtractEvent) initMetaData(processName string, dataBaseType string, pro
 }
 
 func (e *ExtractEvent) readPfile(processName string, dataBaseType string, processType string, log *logrus.Logger) error {
-	pfile, err := spfile.LoadSpfile(fmt.Sprintf("%s.desc", processName), spfile.UTF8, log, dataBaseType, processType)
+	pfile, err := dds_spfile.LoadSpfile(fmt.Sprintf("%s.desc", processName), dds_spfile.UTF8, log, dataBaseType, processType)
 	if err != nil {
 		return err
 	}
@@ -201,7 +201,7 @@ func (e *ExtractEvent) InitSyncerConfig(processName string, dataBaseType string,
 	}
 
 	// 检查进程文件是否存在
-	ok, _ := utils.CheckPcsFile(processName)
+	ok, _ := dds_utils.CheckPcsFile(processName)
 	if ok {
 		e.log.Fatalf("process group is already running")
 	}
@@ -267,7 +267,7 @@ func (e *ExtractEvent) InitSyncerConfig(processName string, dataBaseType string,
 	e.stopSrv.power = make(chan int, 1)
 
 	// 获取可用的rpc端口
-	e.rpcPort, err = utils.GetAvailablePort()
+	e.rpcPort, err = dds_utils.GetAvailablePort()
 	if err != nil {
 		e.ClearProcessInfoFile()
 		e.CloseAll()
@@ -312,7 +312,7 @@ ReStart:
 		goto ReStart
 	}
 
-	if err := process.WriteProcessInfo(e.pFile, utils.Extract, e.rpcPort); err != nil {
+	if err := process.WriteProcessInfo(e.pFile, dds_utils.Extract, e.rpcPort); err != nil {
 		e.CloseAll()
 		e.log.Fatalf("%s", err)
 	}
@@ -341,7 +341,7 @@ ReStart:
 			e.log.Fatalf("%s", err)
 		}
 
-		s, p, err := utils.ConvertPositionToNumber(pos)
+		s, p, err := dds_utils.ConvertPositionToNumber(pos)
 		if err != nil {
 			e.ClearProcessInfoFile()
 			e.CloseAll()

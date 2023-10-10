@@ -2,8 +2,8 @@ package dat
 
 import (
 	"github.com/892294101/cache-mmap/mmap"
-	"github.com/892294101/dds/dbs/metadata"
-	"github.com/892294101/dds/dbs/spfile"
+	"github.com/892294101/dds-metadata"
+	"github.com/892294101/dds-spfile"
 	"github.com/sirupsen/logrus"
 	"sync"
 	"time"
@@ -16,8 +16,8 @@ type WriteCache struct {
 	Prefix          string // 文件前缀
 	MaxSize         int    // 文件最大size
 	dbType          string // 数据库类型
-	md              metadata.MetaData
-	pfile           *spfile.Spfile
+	md              dds_metadata.MetaData
+	pfile           *dds_spfile.Spfile
 	file            *mmap.File
 	Seq             uint64
 	Rba             uint64
@@ -35,7 +35,7 @@ type WriteCache struct {
 type ReadCache struct {
 	DatDir      string // 数据目录
 	Prefix      string // 文件前缀
-	pfile       *spfile.Spfile
+	pfile       *dds_spfile.Spfile
 	file        *mmap.File
 	Seq         uint64
 	Rba         uint64

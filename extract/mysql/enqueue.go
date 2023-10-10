@@ -2,8 +2,8 @@ package oramysql
 
 import (
 	"fmt"
-	"github.com/892294101/dds/dbs/serialize"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds-utils"
+	"github.com/892294101/dds/serialize"
 	"github.com/892294101/go-mysql/canal"
 	"github.com/892294101/go-mysql/mysql"
 	"github.com/892294101/go-mysql/replication"
@@ -37,7 +37,7 @@ func (q *queue) initQueue(log *logrus.Logger) error {
 
 func (q *queue) Enqueue(data interface{}, size uint32) {
 
-	defer utils.ErrorCheckOfRecover(q.Enqueue, q.log)
+	defer dds_utils.ErrorCheckOfRecover(q.Enqueue, q.log)
 	if q.currentSize+size < q.maxSize {
 		q.queue <- data
 		q.currentSize += size

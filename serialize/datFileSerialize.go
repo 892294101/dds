@@ -3,7 +3,7 @@ package serialize
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds-utils"
 	"github.com/golang/snappy"
 	"github.com/pkg/errors"
 )
@@ -61,8 +61,8 @@ func (f *FileMarkV1) EncodeFileMark(Buffer *bytes.Buffer) error {
 	return nil
 }
 func (f *FileMarkV1) EncodeData() ([]byte, error) {
-	Buffer := utils.DataRowsBufferGet()
-	defer utils.DataRowsBufferPut(Buffer)
+	Buffer := dds_utils.DataRowsBufferGet()
+	defer dds_utils.DataRowsBufferPut(Buffer)
 	if err := f.EncodeFileMark(Buffer); err != nil {
 		return nil, err
 	}

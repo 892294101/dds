@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	mymap "github.com/892294101/cache-mmap/mmap"
-	"github.com/892294101/dds/dbs/dat"
-	"github.com/892294101/dds/dbs/ddslog"
-	"github.com/892294101/dds/dbs/metadata"
-	"github.com/892294101/dds/dbs/spfile"
+	"github.com/892294101/dds-metadata"
+	"github.com/892294101/dds-spfile"
+	"github.com/892294101/dds/dat"
+	"github.com/892294101/dds/ddslog"
 	"github.com/grandecola/mmap"
 	"os"
 	"syscall"
@@ -23,7 +23,7 @@ func main() {
 
 	fmt.Println("1")
 
-	md, err := metadata.InitMetaData("HTTK_0002", spfile.GetMySQLName(), spfile.GetExtractName(), log, metadata.LOAD)
+	md, err := dds_metadata.InitMetaData("HTTK_0002", dds_spfile.GetMySQLName(), dds_spfile.GetExtractName(), log, dds_metadata.LOAD)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -46,7 +46,7 @@ func main() {
 
 	}*/
 
-	pfile, err := spfile.LoadSpfile(fmt.Sprintf("%s.desc", "HTTK_0002"), spfile.UTF8, log, spfile.GetMySQLName(), spfile.GetExtractName())
+	pfile, err := dds_spfile.LoadSpfile(fmt.Sprintf("%s.desc", "HTTK_0002"), dds_spfile.UTF8, log, dds_spfile.GetMySQLName(), dds_spfile.GetExtractName())
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -61,7 +61,7 @@ func main() {
 	fmt.Println("4")
 
 	w := dat.NewWriteMgr()
-	dbs := spfile.GetMySQLName()
+	dbs := dds_spfile.GetMySQLName()
 	if err := w.Init(pfile, &dbs, md, log); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

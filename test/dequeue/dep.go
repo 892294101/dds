@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/892294101/dds/dbs/serialize"
+	"github.com/892294101/dds/serialize"
 	"github.com/892294101/go-mysql/canal"
 	"github.com/892294101/go-mysql/replication"
 	"os"

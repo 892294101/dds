@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/892294101/dds/dbs/extract/oracle"
+	"github.com/892294101/dds/extract/oracle"
 	"os"
 )
 

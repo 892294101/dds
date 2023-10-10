@@ -3,7 +3,7 @@ package connect
 import (
 	"database/sql"
 	"fmt"
-	"github.com/892294101/dds/utils"
+	"github.com/892294101/dds-utils"
 	"github.com/godror/godror"
 	"github.com/sirupsen/logrus"
 	"time"
@@ -138,7 +138,7 @@ func (c *ConnectorForOracle) establish() (int32, *sql.DB, error) {
 	cs.Timezone = local
 	cs.SetSessionParamOnInit("NLS_NUMERIC_CHARACTERS", ",.")
 
-	language, territory, charset, err := utils.ParseNLSLANG(c.auth.Character)
+	language, territory, charset, err := dds_utils.ParseNLSLANG(c.auth.Character)
 	if err != nil {
 		return 0, nil, err
 	} else {

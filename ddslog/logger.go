@@ -2,7 +2,7 @@ package ddslog
 
 import (
 	"fmt"
-	"github.com/892294101/dds/utils"
+	"github.com/892294101/dds-utils"
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
@@ -43,7 +43,7 @@ func (s *myFormatter) SetGroupId(groupid string) {
 func InitDDSlog(groupid string) (*logrus.Logger, error) {
 	ddslog := logrus.New()
 
-	dir, err := utils.GetHomeDirectory()
+	dir, err := dds_utils.GetHomeDirectory()
 	if err != nil {
 		return nil, err
 	}

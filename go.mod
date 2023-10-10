@@ -10,13 +10,13 @@ require (
 	github.com/godror/godror v0.36.0
 	github.com/golang/snappy v0.0.4
 	github.com/grandecola/mmap v0.6.0
-	github.com/mattn/go-sqlite3 v1.14.14
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
 	google.golang.org/grpc v1.51.0
 )
 
 require (
+	github.com/892294101/dds-utils v0.0.0-20231009090950-d1b0e251e93e // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/cznic/mathutil v0.0.0-20181122101859-297441e03548 // indirect

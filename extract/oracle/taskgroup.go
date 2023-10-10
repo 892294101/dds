@@ -1,15 +1,15 @@
 package oracle
 
 import (
-	"github.com/892294101/dds/dbs/connect"
-	"github.com/892294101/dds/dbs/spfile"
+	"github.com/892294101/dds-spfile"
+	"github.com/892294101/dds/connect"
 	"github.com/sirupsen/logrus"
 )
 
 // CaptureTasks 捕获任务
 type CaptureTasks struct {
 	extInstanceBody map[int]*ExtInstanceBody // 实例Key编码
-	paramfile       *spfile.Spfile           // 参数文件
+	paramfile       *dds_spfile.Spfile       // 参数文件
 	log             *logrus.Logger           // 日志记录器
 }
 
@@ -89,7 +89,7 @@ func (t *CaptureTasks) reconnectDB() error {
 }
 
 // InitTaskGroups 初始化抓取任务
-func (t *CaptureTasks) InitTaskGroups(s *spfile.Spfile, log *logrus.Logger) error {
+func (t *CaptureTasks) InitTaskGroups(s *dds_spfile.Spfile, log *logrus.Logger) error {
 	t.log = log
 	t.paramfile = s
 

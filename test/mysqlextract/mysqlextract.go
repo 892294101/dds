@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	oramysql "github.com/892294101/dds/dbs/extract/mysql"
-	"github.com/892294101/dds/dbs/spfile"
-	"github.com/892294101/dds/dbs/utils"
+	"github.com/892294101/dds-spfile"
+	"github.com/892294101/dds-utils"
+	oramysql "github.com/892294101/dds/extract/mysql"
 	_ "net/http/pprof"
 	"os"
 	"strings"
@@ -40,9 +40,9 @@ func main() {
 	if processName == nil || len(*processName) == 0 {
 		os.Exit(1)
 	}
-	utils.GlobalProcessID = strings.ToUpper(*processName)
+	dds_utils.GlobalProcessID = strings.ToUpper(*processName)
 	canal := oramysql.NewMySQLSync()
-	canal.InitSyncerConfig(*processName, spfile.GetMySQLName(), spfile.GetExtractName())
+	canal.InitSyncerConfig(*processName, dds_spfile.GetMySQLName(), dds_spfile.GetExtractName())
 	canal.StartSyncToStream()
 }
 

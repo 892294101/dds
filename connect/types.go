@@ -2,7 +2,7 @@ package connect
 
 import (
 	"database/sql"
-	"github.com/892294101/dds/dbs/spfile"
+	"github.com/892294101/dds-spfile"
 	oramysql "github.com/892294101/go-mysql/client"
 	"github.com/sirupsen/logrus"
 )
@@ -17,7 +17,7 @@ const (
 )
 
 type ConnectorForMySQL struct {
-	params  *spfile.Spfile
+	params  *dds_spfile.Spfile
 	log     *logrus.Logger
 	dbType  string
 	proType string
