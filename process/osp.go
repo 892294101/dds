@@ -10,9 +10,9 @@ import (
 	"strings"
 )
 
-func WriteProcessInfo(pfile *dds_spfile.Spfile, proType string, rpcPort int) error {
+func WriteProcessInfo(pfile *ddsspfile.Spfile, proType string, rpcPort int) error {
 	pid := os.Getpid()
-	home, err := dds_utils.GetHomeDirectory()
+	home, err := ddsutils.GetHomeDirectory()
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func WriteProcessInfo(pfile *dds_spfile.Spfile, proType string, rpcPort int) err
 	}
 
 	file := filepath.Join(*home, "pcs", *pname)
-	ok := dds_utils.IsFileExist(file)
+	ok := ddsutils.IsFileExist(file)
 	if ok {
 		return errors.Errorf("error writing process group information because process file information already exists")
 	}
@@ -33,20 +33,20 @@ func WriteProcessInfo(pfile *dds_spfile.Spfile, proType string, rpcPort int) err
 	}
 
 	var pinfo strings.Builder
-	pinfo.WriteString(fmt.Sprintf("%9s: %v\n", dds_utils.PROGRAM, proType))
-	pinfo.WriteString(fmt.Sprintf("%9s: %v\n", dds_utils.PROCESSID, *pname))
-	pinfo.WriteString(fmt.Sprintf("%9s: %d\n", dds_utils.PORT, rpcPort))
-	pinfo.WriteString(fmt.Sprintf("%9s: %d\n", dds_utils.PID, pid))
-	pinfo.WriteString(fmt.Sprintf("%9s: %s\n", dds_utils.STATUS, dds_utils.RUNNING))
-	pinfo.WriteString(fmt.Sprintf("%9s: %s\n", dds_utils.DBTYPE, dds_spfile.GetMySQLName()))
+	pinfo.WriteString(fmt.Sprintf("%9s: %v\n", ddsutils.PROGRAM, proType))
+	pinfo.WriteString(fmt.Sprintf("%9s: %v\n", ddsutils.PROCESSID, *pname))
+	pinfo.WriteString(fmt.Sprintf("%9s: %d\n", ddsutils.PORT, rpcPort))
+	pinfo.WriteString(fmt.Sprintf("%9s: %d\n", ddsutils.PID, pid))
+	pinfo.WriteString(fmt.Sprintf("%9s: %s\n", ddsutils.STATUS, ddsutils.RUNNING))
+	pinfo.WriteString(fmt.Sprintf("%9s: %s\n", ddsutils.DBTYPE, ddsspfile.GetMySQLName()))
 	hand.WriteString(pinfo.String())
 	pinfo.Reset()
 	hand.Close()
 	return nil
 }
 
-func RemoveProcessInfo(pfile *dds_spfile.Spfile) error {
-	home, err := dds_utils.GetHomeDirectory()
+func RemoveProcessInfo(pfile *ddsspfile.Spfile) error {
+	home, err := ddsutils.GetHomeDirectory()
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func RemoveProcessInfo(pfile *dds_spfile.Spfile) error {
 	}
 
 	file := filepath.Join(*home, "pcs", *pname)
-	ok := dds_utils.IsFileExist(file)
+	ok := ddsutils.IsFileExist(file)
 	if ok {
 		os.Remove(file)
 	}

@@ -14,7 +14,7 @@ const (
 )
 
 func (e *ExtractEvent) WriteToFile(v []byte) error {
-	defer dds_utils.ErrorCheckOfRecover(e.WriteToFile, e.log)
+	defer ddsutils.ErrorCheckOfRecover(e.WriteToFile, e.log)
 	if err := e.fileWrite.Write(v); err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func (e *ExtractEvent) WriteToFile(v []byte) error {
 }
 
 func (e *ExtractEvent) WriteCache(v interface{}) error {
-	defer dds_utils.ErrorCheckOfRecover(e.WriteCache, e.log)
+	defer ddsutils.ErrorCheckOfRecover(e.WriteCache, e.log)
 	switch d := v.(type) {
 	case *serialize.DataRowEvent:
 		sch := *(*string)(unsafe.Pointer(&d.RowEvent.RowsEvent.Table.Schema))
@@ -88,7 +88,7 @@ func (e *ExtractEvent) WriteCache(v interface{}) error {
 		case serialize.TransCommit:
 			e.log.Debugf("transaction tail received: %v:%v. transaction xid: %v", d.Pos.Name, d.Pos.Pos, d.Xid.XID)
 			// 更新log file number和position
-			s, p, err := dds_utils.ConvertPositionToNumber(d.Pos)
+			s, p, err := ddsutils.ConvertPositionToNumber(d.Pos)
 			if err != nil {
 				e.log.Errorf("%v", err)
 				e.ClearProcessInfoFile()
@@ -135,7 +135,7 @@ func (e *ExtractEvent) WriteCache(v interface{}) error {
 }
 
 func (e *ExtractEvent) Encode(v interface{}) ([]byte, error) {
-	defer dds_utils.ErrorCheckOfRecover(e.Encode, e.log)
+	defer ddsutils.ErrorCheckOfRecover(e.Encode, e.log)
 	switch d := v.(type) {
 	case *serialize.DataRowEvent:
 		return e.serialize[DataEvent].Encode(d, false)
@@ -147,7 +147,7 @@ func (e *ExtractEvent) Encode(v interface{}) ([]byte, error) {
 }
 
 func (e *ExtractEvent) ProcessCacheData() {
-	defer dds_utils.ErrorCheckOfRecover(e.ProcessCacheData, e.log)
+	defer ddsutils.ErrorCheckOfRecover(e.ProcessCacheData, e.log)
 	ticker := time.NewTicker(time.Second * 60)
 	go func() {
 		for range ticker.C {

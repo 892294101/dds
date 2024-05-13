@@ -47,7 +47,7 @@ func (t *TransactionV1) Init(v *TransactionEvent) error {
 		t.Xid = &DefaultXid
 	}
 	t.TransType = uint8(v.TransType)
-	f, p, err := dds_utils.ConvertPositionToNumber(v.Pos)
+	f, p, err := ddsutils.ConvertPositionToNumber(v.Pos)
 	if err != nil {
 		return err
 	}
@@ -85,8 +85,8 @@ func (t *TransactionV1) EncodeTransaction(Buffer *bytes.Buffer) error {
 }
 
 func (t *TransactionV1) EncodeData() ([]byte, error) {
-	Buffer := dds_utils.DataRowsBufferGet()
-	defer dds_utils.DataRowsBufferPut(Buffer)
+	Buffer := ddsutils.DataRowsBufferGet()
+	defer ddsutils.DataRowsBufferPut(Buffer)
 
 	if err := t.EncodeTransaction(Buffer); err != nil {
 		return nil, err

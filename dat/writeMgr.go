@@ -17,13 +17,13 @@ import (
 	"time"
 )
 
-func (w *WriteCache) Init(s *dds_spfile.Spfile, dbType *string, mdh dds_metadata.MetaData, log *logrus.Logger) error {
+func (w *WriteCache) Init(s *ddsspfile.Spfile, dbType *string, mdh ddsmetadata.MetaData, log *logrus.Logger) error {
 	trail := s.GetTrail()
 	w.MaxSize = *trail.GetSizeValue() * 1024 * 1024
 	w.md = mdh
 	w.log = log
 	w.log.Debugf("Get the program home directory")
-	home, err := dds_utils.GetHomeDirectory()
+	home, err := ddsutils.GetHomeDirectory()
 	if err != nil {
 		return err
 	}
@@ -203,11 +203,11 @@ func (w *WriteCache) LoadDatFile() error {
 	w.flushPeriodTime = time.Second
 	if (fn != nil && rba != nil) && (*fn == 0 && *rba == 0) {
 		w.CurrentFile = filepath.Join(w.DatDir, fmt.Sprintf("%s%09d", w.Prefix, *fn))
-		if !dds_utils.PathExists(w.DatDir) {
+		if !ddsutils.PathExists(w.DatDir) {
 			return errors.Errorf("directory does not exist: %s", w.CurrentFile)
 		}
 
-		if dds_utils.IsFileExist(w.CurrentFile) {
+		if ddsutils.IsFileExist(w.CurrentFile) {
 			return errors.Errorf("file already exists: %s", w.CurrentFile)
 		} else {
 			if err := w.CreateDatFile(); err != nil {

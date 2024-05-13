@@ -16,8 +16,8 @@ type WriteCache struct {
 	Prefix          string // 文件前缀
 	MaxSize         int    // 文件最大size
 	dbType          string // 数据库类型
-	md              dds_metadata.MetaData
-	pfile           *dds_spfile.Spfile
+	md              ddsmetadata.MetaData
+	pfile           *ddsspfile.Spfile
 	file            *mmap.File
 	Seq             uint64
 	Rba             uint64
@@ -35,7 +35,7 @@ type WriteCache struct {
 type ReadCache struct {
 	DatDir      string // 数据目录
 	Prefix      string // 文件前缀
-	pfile       *dds_spfile.Spfile
+	pfile       *ddsspfile.Spfile
 	file        *mmap.File
 	Seq         uint64
 	Rba         uint64

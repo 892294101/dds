@@ -23,7 +23,7 @@ func main() {
 
 	fmt.Println("1")
 
-	md, err := dds_metadata.InitMetaData("HTTK_0002", dds_spfile.GetMySQLName(), dds_spfile.GetExtractName(), log, dds_metadata.LOAD)
+	md, err := ddsmetadata.InitMetaData("HTTK_0002", ddsspfile.GetMySQLName(), ddsspfile.GetExtractName(), log, ddsmetadata.LOAD)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -46,7 +46,7 @@ func main() {
 
 	}*/
 
-	pfile, err := dds_spfile.LoadSpfile(fmt.Sprintf("%s.desc", "HTTK_0002"), dds_spfile.UTF8, log, dds_spfile.GetMySQLName(), dds_spfile.GetExtractName())
+	pfile, err := ddsspfile.LoadSpfile(fmt.Sprintf("%s.desc", "HTTK_0002"), ddsspfile.UTF8, log, ddsspfile.GetMySQLName(), ddsspfile.GetExtractName())
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -61,7 +61,7 @@ func main() {
 	fmt.Println("4")
 
 	w := dat.NewWriteMgr()
-	dbs := dds_spfile.GetMySQLName()
+	dbs := ddsspfile.GetMySQLName()
 	if err := w.Init(pfile, &dbs, md, log); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

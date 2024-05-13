@@ -61,8 +61,8 @@ func (f *FileMarkV1) EncodeFileMark(Buffer *bytes.Buffer) error {
 	return nil
 }
 func (f *FileMarkV1) EncodeData() ([]byte, error) {
-	Buffer := dds_utils.DataRowsBufferGet()
-	defer dds_utils.DataRowsBufferPut(Buffer)
+	Buffer := ddsutils.DataRowsBufferGet()
+	defer ddsutils.DataRowsBufferPut(Buffer)
 	if err := f.EncodeFileMark(Buffer); err != nil {
 		return nil, err
 	}

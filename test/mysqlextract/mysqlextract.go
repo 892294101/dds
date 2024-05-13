@@ -15,6 +15,7 @@ var processName = flag.String("processid", "", "Please enter the process id name
 //var bg = flag.String("background", "n", "Put it to run in the background")
 
 func main() {
+
 	/*dat := []byte("123123  dfsadf")
 	dat2 := []byte("h 45")
 	var b utils.BytesBufferPool
@@ -40,9 +41,10 @@ func main() {
 	if processName == nil || len(*processName) == 0 {
 		os.Exit(1)
 	}
-	dds_utils.GlobalProcessID = strings.ToUpper(*processName)
+
+	ddsutils.GlobalProcessID = strings.ToUpper(*processName)
 	canal := oramysql.NewMySQLSync()
-	canal.InitSyncerConfig(*processName, dds_spfile.GetMySQLName(), dds_spfile.GetExtractName())
+	canal.InitSyncerConfig(*processName, ddsspfile.GetMySQLName(), ddsspfile.GetExtractName())
 	canal.StartSyncToStream()
 }
 

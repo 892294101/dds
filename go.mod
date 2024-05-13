@@ -4,20 +4,23 @@ go 1.19
 
 require (
 	github.com/892294101/cache-mmap v0.0.0-20220928035239-34410174e250
-	github.com/892294101/ddsrpc v0.0.0-20221120031727-07afe4c7defc
 	github.com/892294101/go-mysql v1.2.3
 	github.com/892294101/parser v0.0.0-20220705174247-7e3b2232c99f
 	github.com/godror/godror v0.36.0
 	github.com/golang/snappy v0.0.4
 	github.com/grandecola/mmap v0.6.0
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.51.0
 )
 
 require (
-	github.com/892294101/dds-utils v0.0.0-20231009090950-d1b0e251e93e // indirect
+	github.com/892294101/dds-metadata v0.0.0-20231010090723-9b26c2891b8e // indirect
+	github.com/892294101/dds-rpc v0.0.0-20231010072800-98caa5920764 // indirect
+	github.com/892294101/dds-spfile v0.0.0-20231010083737-b090632e7090 // indirect
+	github.com/892294101/dds-utils v0.0.0-20231010070848-7fccccfd3933 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/antlr/antlr4 v0.0.0-20210105192202-5c2b686f95e1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/cznic/mathutil v0.0.0-20181122101859-297441e03548 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
@@ -27,6 +30,8 @@ require (
 	github.com/godror/knownpb v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/jiunx/xsqlparser v1.0.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/pingcap/errors v0.11.5-0.20210425183316-da1aaba5fb63 // indirect
 	github.com/pingcap/log v0.0.0-20210625125904-98ed8e2eb1c7 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect

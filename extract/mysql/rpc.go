@@ -2,7 +2,7 @@ package oramysql
 
 import (
 	"context"
-	"github.com/892294101/ddsrpc/pcb"
+	"github.com/892294101/dds-rpc/pcb"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

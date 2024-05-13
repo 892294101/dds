@@ -138,7 +138,7 @@ func (c *ConnectorForOracle) establish() (int32, *sql.DB, error) {
 	cs.Timezone = local
 	cs.SetSessionParamOnInit("NLS_NUMERIC_CHARACTERS", ",.")
 
-	language, territory, charset, err := dds_utils.ParseNLSLANG(c.auth.Character)
+	language, territory, charset, err := ddsutils.ParseNLSLANG(c.auth.Character)
 	if err != nil {
 		return 0, nil, err
 	} else {

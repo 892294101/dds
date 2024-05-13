@@ -9,7 +9,7 @@ import (
 // CaptureTasks 捕获任务
 type CaptureTasks struct {
 	extInstanceBody map[int]*ExtInstanceBody // 实例Key编码
-	paramfile       *dds_spfile.Spfile       // 参数文件
+	paramfile       *ddsspfile.Spfile        // 参数文件
 	log             *logrus.Logger           // 日志记录器
 }
 
@@ -89,7 +89,7 @@ func (t *CaptureTasks) reconnectDB() error {
 }
 
 // InitTaskGroups 初始化抓取任务
-func (t *CaptureTasks) InitTaskGroups(s *dds_spfile.Spfile, log *logrus.Logger) error {
+func (t *CaptureTasks) InitTaskGroups(s *ddsspfile.Spfile, log *logrus.Logger) error {
 	t.log = log
 	t.paramfile = s
 

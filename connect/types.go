@@ -17,7 +17,7 @@ const (
 )
 
 type ConnectorForMySQL struct {
-	params  *dds_spfile.Spfile
+	params  *ddsspfile.Spfile
 	log     *logrus.Logger
 	dbType  string
 	proType string

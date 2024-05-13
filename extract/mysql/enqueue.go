@@ -37,7 +37,7 @@ func (q *queue) initQueue(log *logrus.Logger) error {
 
 func (q *queue) Enqueue(data interface{}, size uint32) {
 
-	defer dds_utils.ErrorCheckOfRecover(q.Enqueue, q.log)
+	defer ddsutils.ErrorCheckOfRecover(q.Enqueue, q.log)
 	if q.currentSize+size < q.maxSize {
 		q.queue <- data
 		q.currentSize += size

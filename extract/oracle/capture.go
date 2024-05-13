@@ -2,24 +2,24 @@ package oracle
 
 import (
 	"fmt"
-	"github.com/892294101/dds/dbs/ddslog"
-	"github.com/892294101/dds/dbs/metadata"
-	"github.com/892294101/dds/dbs/spfile"
+	"github.com/892294101/dds-metadata"
+	"github.com/892294101/dds-spfile"
+	"github.com/892294101/dds/ddslog"
 	"github.com/pingcap/errors"
 	"github.com/sirupsen/logrus"
 	"strings"
 )
 
 type Capture struct {
-	processName, dataBaseType, processType string            //基本信息
-	pfile                                  *spfile.Spfile    // 参数文件
-	log                                    *logrus.Logger    // 日志记录器
-	md                                     metadata.MetaData // 元数据文件
-	capt                                   *CaptureTasks     // 数据捕获任务
+	processName, dataBaseType, processType string               //基本信息
+	pfile                                  *ddsspfile.Spfile    // 参数文件
+	log                                    *logrus.Logger       // 日志记录器
+	md                                     ddsmetadata.MetaData // 元数据文件
+	capt                                   *CaptureTasks        // 数据捕获任务
 }
 
 func (c *Capture) readPFile() error {
-	pfile, err := spfile.LoadSpfile(fmt.Sprintf("%s.desc", c.processName), spfile.UTF8, c.log, c.dataBaseType, c.processType)
+	pfile, err := ddsspfile.LoadSpfile(fmt.Sprintf("%s.desc", c.processName), ddsspfile.UTF8, c.log, c.dataBaseType, c.processType)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func (c *Capture) readPFile() error {
 
 func (c *Capture) InitConfig(processName string) error {
 	c.processName = strings.ToUpper(processName)
-	c.dataBaseType, c.processType = spfile.GetOracleName(), spfile.GetExtractName()
+	c.dataBaseType, c.processType = ddsspfile.GetOracleName(), ddsspfile.GetExtractName()
 
 	// 初始化日志系统
 	log, err := ddslog.InitDDSlog(processName)
@@ -52,7 +52,7 @@ func (c *Capture) InitConfig(processName string) error {
 	}
 
 	// 初始化检查点元数据文件
-	mds, err := metadata.InitMetaData(processName, c.dataBaseType, c.processType, c.log, metadata.LOAD)
+	mds, err := ddsmetadata.InitMetaData(processName, c.dataBaseType, c.processType, c.log, ddsmetadata.LOAD)
 	if err != nil {
 		return err
 	}

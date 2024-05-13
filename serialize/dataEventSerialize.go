@@ -35,8 +35,8 @@ func (d *DataEventV1) InitBuffer() error {
 }
 
 func (d *DataEventV1) EncodeData() ([]byte, error) {
-	Buffer := dds_utils.DataRowsBufferGet()
-	defer dds_utils.DataRowsBufferPut(Buffer)
+	Buffer := ddsutils.DataRowsBufferGet()
+	defer ddsutils.DataRowsBufferPut(Buffer)
 
 	if err := binary.Write(Buffer, binary.LittleEndian, DATA_ROW_HEAD); err != nil {
 		return nil, errors.Errorf("DATA_ROW_HEAD binary write error: %v", err)

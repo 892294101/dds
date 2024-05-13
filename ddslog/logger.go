@@ -43,7 +43,7 @@ func (s *myFormatter) SetGroupId(groupid string) {
 func InitDDSlog(groupid string) (*logrus.Logger, error) {
 	ddslog := logrus.New()
 
-	dir, err := dds_utils.GetHomeDirectory()
+	dir, err := ddsutils.GetHomeDirectory()
 	if err != nil {
 		return nil, err
 	}
